@@ -1,0 +1,7 @@
+*.pyc
+*.ss
+*.sz
+*.swp
+*.project
+*.pydevproject
+*.prefs
