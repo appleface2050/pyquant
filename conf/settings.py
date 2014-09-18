@@ -6,8 +6,8 @@ import json
 # mysql
 
 A_SHARES_CODE = {
-	#'host':'192.168.88.129',
-	'host':'localhost',
+	'host':'192.168.88.129',
+	#'host':'localhost',
 	'port':3306,
 	'user':'appleface',
 	'passwd':'root',
