@@ -8,7 +8,6 @@ import datetime
 
 sys.path.append(os.path.dirname(os.path.split(os.path.realpath(__file__))[0]))
 
-from lib.utils import strptime,time_next
 from lib.database import Model
 
 class StockData(Model):
@@ -33,4 +32,27 @@ class StockData(Model):
 		"PRIMARY KEY `idx_id` (`id`)",
 		"UNIQUE KEY `code_exchange_Date` (`code`,`exchange`,`Date`)")
 
-
+	def get_stock_data_from_db(self, code, exch, start, end):
+		if code and exch and start and end:
+			qtype = "SELECT CODE,exchange,DATE,OPEN,High,Low,CLOSE,Volume,AdjClose"
+			ext = "CODE='%s' AND exchange = '%s' AND DATE>='%s' AND DATE<'%s'" % (code,exch,start,end)
+			q = self.Q(qtype=qtype).extra(ext)
+			return q
+		else:
+			return False
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

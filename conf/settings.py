@@ -21,10 +21,11 @@ DB_CNF = {
 	's':{json.dumps(A_SHARES_CODE):['A_shares_data']},
 }
 
+#DATAFECHING
 TIMEOUT_REFETCH_DAILY = 15
 TIMEOUT_FETCH_DAILY = 10
 
 
-
-
+#technical analysis indicators
+TECH_ANALY_IND = ['MA120','MA240','MACD','KDJ']
 
