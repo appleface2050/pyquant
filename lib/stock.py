@@ -4,6 +4,7 @@
 import datetime
 import os
 import sys
+import copy
 
 sys.path.append(os.path.dirname(os.path.split(os.path.realpath(__file__))[0]))
 
@@ -58,11 +59,12 @@ class StockPool(object):
         '''
         res = []
         stock = {}
-        chart = {}
+        s_chart = []
         for i in self._stock_pool:
             s_code = i.get_stockinfo_code()
             s_exch = i.get_stockinfo_exch()
             s_chart = self._stock_pool[i].get_stock_chart()
+            chart = {}
             for day_c in s_chart:
                 tmp_day = day_c['DATE'].date()
                 #chart[day_c['DATE']] = day_c
@@ -70,11 +72,12 @@ class StockPool(object):
                 day_c.pop('CODE')
                 day_c.pop('exchange')
                 chart[tmp_day] = day_c
-            #print chart
+            #print chart            
             stock = {'code':s_code,
                      'exch':s_exch,
                      'chart':chart}
             res.append(stock)
+
             #print stock['chart'].keys()
         return res 
     
@@ -155,11 +158,12 @@ if __name__ == '__main__':
     #print si.get_stockinfo_code()
     #print []
     sp = StockPool([si,si2],start,end).stock_pool_desc()
-    for s in sp:
-        print s
+    #for s in sp:
+    #    print s
     #print sp.get_stock_pool_day_num(si)
     spif = StockPool([si,si2],start,end).stock_pool_ind_computing_format()
-    
+    for i in spif:
+        print i
     
     
     

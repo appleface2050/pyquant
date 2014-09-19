@@ -82,6 +82,7 @@ class Indicator(object):
         ]
         """
         ind_format_data = self._stock_pool.stock_pool_ind_computing_format()
+        
         day_index = ind_format_data[0]['chart'].keys()
         day_index = self.bubblesort_asc(day_index)
         #print day_index
@@ -89,7 +90,7 @@ class Indicator(object):
         #print len(ind_format_data[0]['chart'].keys()) #日期数量
         
         for ma_type in ma_ind:
-            print "calculating",ma_type
+            print "...calculating",ma_type
             ma_day_type = self.find_ma_day_type(ma_type)
             if not ma_day_type:
                 print "MA day type wrong"
@@ -98,7 +99,7 @@ class Indicator(object):
             for stock in ind_format_data:
                 #print stock
                 #print stock['code'],stock['exch'],stock['chart'][0],stock['chart'][1],stock['chart'][2]
-                print stock['code']
+                #print stock['code']
                 count_day_list = self.prepare_count_day_list(stock,self._start)
                 date_index = self.bubblesort_asc(stock['chart'].keys())
                 #print len(date_index)
@@ -106,6 +107,7 @@ class Indicator(object):
                 for date in count_day_list:
                     #print date
                     ma = self.counting_averae(stock['chart'],date,date_index,ma_day_type)
+                    stock['chart'][date][ma_type] = ma
     
     def counting_averae(self, stock_data, date, date_index, ma_day_type):
         '''
@@ -136,7 +138,7 @@ class Indicator(object):
                     #print  stock_data[day]
                     sum_close += float(stock_data[day]['CLOSE'])
                 #print sum_close
-                #print sum_close/int(ma_day_type)
+                return "%0.02f"%float(sum_close/int(ma_day_type))
        
     def prepare_cal_day_list(self, start, end, date_index):
         res = []
