@@ -17,13 +17,15 @@ class Indicator(object):
     technical analysis indicators
     '''
     def __init__(self, stock_pool, start, ind_list):
+        self._ind_format_data = []
         if stock_pool and start and ind_list:
             self._stock_pool = stock_pool
             self._ind_list = ind_list
             self._start = start
+            #self._ind_format_data = self._stock_pool.stock_pool_ind_computing_format()
             if(self.prepare_computing()):
                 self.start_computing()
-            
+                
         else:
             print "technical analysis indicators init ERROR"
             return False
@@ -81,9 +83,10 @@ class Indicator(object):
         },{...}
         ]
         """
-        ind_format_data = self._stock_pool.stock_pool_ind_computing_format()
-        
-        day_index = ind_format_data[0]['chart'].keys()
+        #ind_format_data = self._stock_pool.stock_pool_ind_computing_format()
+        #print ind_format_data
+        day_index = self._ind_format_data[0]['chart'].keys()
+        #day_index = ind_format_data[0]['chart'].keys()
         day_index = self.bubblesort_asc(day_index)
         #print day_index
         
@@ -96,7 +99,8 @@ class Indicator(object):
                 print "MA day type wrong"
                 return False
             
-            for stock in ind_format_data:
+            for stock in self._ind_format_data:
+            #for stock in ind_format_data:
                 #print stock
                 #print stock['code'],stock['exch'],stock['chart'][0],stock['chart'][1],stock['chart'][2]
                 #print stock['code']
@@ -108,6 +112,10 @@ class Indicator(object):
                     #print date
                     ma = self.counting_averae(stock['chart'],date,date_index,ma_day_type)
                     stock['chart'][date][ma_type] = ma
+                    
+        print self._ind_format_data[0]['chart']
+        #print ind_format_data[0]['chart']
+        
     
     def counting_averae(self, stock_data, date, date_index, ma_day_type):
         '''
@@ -184,6 +192,8 @@ class Indicator(object):
             print "start time wrong, please check start time again"
             return False
         print "......data checking done......"
+        self._ind_format_data = self._stock_pool.stock_pool_ind_computing_format()
+        print "......indicator calculate data form prepare done......"
         return True
         
     def check_indicator(self):
@@ -207,14 +217,14 @@ class Indicator(object):
 
 if __name__ == '__main__':
     now = datetime.datetime.now()
-    start = datetime.datetime.strptime('2012-08-17','%Y-%m-%d').date()
+    start = datetime.datetime.strptime('2014-08-17','%Y-%m-%d').date()
     end = datetime.datetime.strptime('2014-09-01','%Y-%m-%d').date()
-    start_ind_counting_date = datetime.datetime.strptime('2014-08-17','%Y-%m-%d').date()
+    start_ind_counting_date = datetime.datetime.strptime('2014-08-25','%Y-%m-%d').date()
     si = StockInfo({'code':'600882','exch':'ss'})
     si2 = StockInfo({'code':'900920','exch':'ss'})
     sp = StockPool([si,si2],start,end)
     #print sp.stock_pool_desc()
-    ind = Indicator(sp,start_ind_counting_date,['MA120','MA240','MACD'])
+    ind = Indicator(sp,start_ind_counting_date,['MA5'])
     #ind.check_start_time()
     print datetime.datetime.now()-now
     

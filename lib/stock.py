@@ -32,6 +32,7 @@ class StockPool(object):
         desc = self.stock_pool_desc()
         min_date = ''
         for stock in desc:
+            #print stock
             for chart in stock['chart']:
                 if not min_date:
                     min_date = chart['DATE']
