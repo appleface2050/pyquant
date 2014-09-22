@@ -80,8 +80,8 @@ class Indicator(object):
                 use_stock['chart'] = use_stock_chart
                 self._useful_ind_format_data.append(use_stock)
     
-        print self._useful_ind_format_data
-        print self._ind_format_data
+        #print self._useful_ind_format_data
+        #print self._ind_format_data
     
     def kdj_ind_computing(self):
         print "kdj ind not ready yet"
@@ -250,15 +250,16 @@ class Indicator(object):
 
 if __name__ == '__main__':
     now = datetime.datetime.now()
-    start = datetime.datetime.strptime('2014-08-17','%Y-%m-%d').date()
+    start = datetime.datetime.strptime('2002-08-17','%Y-%m-%d').date()
     end = datetime.datetime.strptime('2014-09-01','%Y-%m-%d').date()
     start_ind_counting_date = datetime.datetime.strptime('2014-08-25','%Y-%m-%d').date()
     si = StockInfo({'code':'600882','exch':'ss'})
     si2 = StockInfo({'code':'900920','exch':'ss'})
     sp = StockPool([si,si2],start,end)
     #print sp.stock_pool_desc()
-    ind = Indicator(sp,start_ind_counting_date,['MA5'])
-    print ind._ind_format_data[0]['chart']
+    ind = Indicator(sp,start_ind_counting_date,['MA120','MA240'])
+    #print ind._ind_format_data[0]['chart']
+    print ind._useful_ind_format_data
     print datetime.datetime.now()-now
     
     
