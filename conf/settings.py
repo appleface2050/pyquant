@@ -29,3 +29,8 @@ TIMEOUT_FETCH_DAILY = 10
 #technical analysis indicators
 TECH_ANALY_IND = ['MA5','MA120','MA240','MACD','KDJ']
 
+
+
+
+#direction list
+DIRECTION_LIST = ['long', 'short']
