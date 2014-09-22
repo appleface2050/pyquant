@@ -17,6 +17,8 @@ class StockPool(object):
     def __init__(self, stock_list, start, end):
         print "----------Initializing Stock Pool--------------"
         self._stock_pool = {}
+        self._start = start
+        self._end = end
         for stock in stock_list:
             self._stock_pool[stock] = StockChart(stock,start,end)
         
@@ -28,6 +30,12 @@ class StockPool(object):
         print "chart days number:",end-self.get_min_date().date()
         print "-----------------------"
         
+    def get_stock_pool_start(self):
+        return self._start
+    
+    def get_stock_pool_end(self):
+        return self._end    
+    
     def get_min_date(self):
         desc = self.stock_pool_desc()
         min_date = ''

@@ -18,10 +18,11 @@ class Indicator(object):
     '''
     def __init__(self, stock_pool, start, ind_list):
         self._ind_format_data = []
+        self._useful_ind_format_data = []
         if stock_pool and start and ind_list:
             self._stock_pool = stock_pool
-            self._ind_list = ind_list
-            self._start = start
+            self._ind_list = ind_list   
+            self._start = start      #indicator count start time
             #self._ind_format_data = self._stock_pool.stock_pool_ind_computing_format()
             if(self.prepare_computing()):
                 self.start_computing()
@@ -29,7 +30,13 @@ class Indicator(object):
         else:
             print "technical analysis indicators init ERROR"
             return False
-        
+    
+    def get_ind_count_start(self):
+        return self._start
+    
+    def get_ind_count_end(self):
+        return self._stock_pool.get_stock_pool_end()
+    
     def start_computing(self):
         print "......start calculate indicators......"
         
@@ -45,7 +52,36 @@ class Indicator(object):
         if 'KDJ' in self._ind_list:
             self.kdj_ind_computing()
         
+        self.generate_useful_ind_format_data()
+        
         print "......calculating indicators done......"
+    
+    def generate_useful_ind_format_data(self):
+        self._useful_ind_format_data = []
+        #for stock in self._ind_format_data:    #stock
+        #    for dat in stock['chart']:         #chart
+        #        for ind in self._ind_list:     #MA120 MA240
+        #            print ind
+                    #if dat[ind] in dat.keys():    
+                    #    print dat[ind]
+        start = self.get_ind_count_start()
+        end = self.get_ind_count_end()
+        if start and end:
+            for stock in self._ind_format_data:    #stock
+                use_stock = {}
+                use_stock['code'] = stock['code']
+                use_stock['exch'] = stock['exch']
+                
+                use_stock_chart = {}
+                for dat in stock['chart']:         #chart
+                    if dat>=start and dat<=end:
+                        use_stock_chart[dat] = stock['chart'][dat]
+                    #print use_stock_chart
+                use_stock['chart'] = use_stock_chart
+                self._useful_ind_format_data.append(use_stock)
+    
+        print self._useful_ind_format_data
+        print self._ind_format_data
     
     def kdj_ind_computing(self):
         print "kdj ind not ready yet"
@@ -113,10 +149,8 @@ class Indicator(object):
                     ma = self.counting_averae(stock['chart'],date,date_index,ma_day_type)
                     stock['chart'][date][ma_type] = ma
                     
-        print self._ind_format_data[0]['chart']
-        #print ind_format_data[0]['chart']
+        #print self._ind_format_data[0]['chart']
         
-    
     def counting_averae(self, stock_data, date, date_index, ma_day_type):
         '''
         stock_data:
@@ -165,7 +199,6 @@ class Indicator(object):
         #return date_list
         return self.bubblesort_asc(self.delete_useless_date(stock['chart'].keys(),start))
         
-    
     def delete_useless_date(self,date_list,start):
         res = []
         for date in date_list:
@@ -225,8 +258,12 @@ if __name__ == '__main__':
     sp = StockPool([si,si2],start,end)
     #print sp.stock_pool_desc()
     ind = Indicator(sp,start_ind_counting_date,['MA5'])
-    #ind.check_start_time()
+    print ind._ind_format_data[0]['chart']
     print datetime.datetime.now()-now
+    
+    
+    
+    
     
     
     
