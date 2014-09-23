@@ -41,10 +41,14 @@ class StockData(Model):
 		else:
 			return False
 		
-		
-		
-		
-		
+	def get_one_day_price(self, start, code, exch, item):
+		if start and code and exch and item:
+			qtype = "SELECT %s " % item
+			ext = "CODE='%s' AND exchange='%s' AND DATE='%s'" % (code,exch,start)
+			q = self.Q(qtype=qtype).extra(ext)
+			return q
+		else:
+			return False
 		
 		
 		

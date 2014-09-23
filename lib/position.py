@@ -11,7 +11,8 @@ sys.path.append(os.path.dirname(os.path.split(os.path.realpath(__file__))[0]))
 
 from lib.stock  import StockInfo
 from lib.indicator import Indicator
-from conf.settings import TECH_ANALY_IND,DIRECTION_LIST
+from conf.settings import TECH_ANALY_IND,DIRECTION_LIST,TRADE_PRICE_ORDER_LIST
+from model.stock_data import StockData
 
 class Position(object):
     '''
@@ -32,9 +33,31 @@ class Position(object):
 
     def add(self, trade):
         if trade:
+            trade = self.prepare_trade(trade)
             self._trade_list.append(trade)
             self.trade_exec(trade)
             return True
+        else:
+            return False
+    
+    def prepare_trade(self, trade):
+        if trade.get_price() in TRADE_PRICE_ORDER_LIST:
+            trade = self.merge_trade(trade)  
+        return trade
+        
+    def merge_trade(self, trade):
+        m = re.match(r'^(\w+):(\w+)', trade.get_price())
+        if m:
+            date_order = m.group(1)
+            p_order = m.group(2)
+            #return m.group(2)
+            if date_order == 'today':
+                start = trade.get_deal_time()
+                price = StockData.mgr().get_one_day_price(start,trade.get_stock_code(),trade.get_stock_exch(),p_order)[0]['Close']
+                trade.set_price(price)
+                return trade
+            else:
+                print "error, date_order not defined"
         else:
             return False
     
@@ -131,18 +154,65 @@ class Position(object):
             print "price:",i.get_price()
             print "quantity:",i.get_quantity()
             
-    def close_position(self):
+    def clear_position(self, date):
         '''
-        close position: generate a close position trade and exce it
+        close position: generate a lot of clear position trade and exce it
         '''
-        start = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        print "close position need today close price ,not ready yet"
         #print self._position_table
-        for stock_info in self._position_table:
-            cpt = Trade(start,stock_info,'short',9.63,200)
-            
+        for stock in self._position_table:
+            if self.get_position_table_stock_quantity(stock) == 0:
+                continue
+            else:
+                t = self.generate_reverse_trade_today_close(stock, date)
+                #print t
+                self.add(t)
+
+    def generate_reverse_trade_today_close(self, stock, date):
+        if not stock or not date:
+            print "ERROR stock or date is null"
+            return False
+        if stock not in self._position_table:
+            print stock,"this stock not in _position_table" 
+            return False
+        else:
+            t = Trade(date,
+                      stock,
+                      self.get_reverse_direction(self.get_position_table_stock_direction(stock)),
+                      'today:Close',
+                      self.get_position_table_stock_quantity(stock))
+            return t
         
+    def get_reverse_direction(self, direction):
+        if direction not in DIRECTION_LIST:
+            print "direction not in DIRECTION_LIST"
+            return False
+        else:
+            if direction == 'long':
+                return 'short'
+            elif direction == 'short':
+                return 'long'
+            else:
+                print "direction doesn't change"
+                return direction
+        
+    def get_position_table_stock_code(self, stock):    
+        return self._position_table[stock]['code']
     
+    def get_position_table_stock_exch(self, stock):
+        return stock.get_stockinfo_exch()
+    
+    def get_position_table_stock_direction(self, stock):
+        return self._position_table[stock]['direction']
+        
+    def get_position_table_stock_net(self, stock):
+        return self._position_table[stock]['net']
+        
+    def get_position_table_stock_quantity(self, stock):
+        return self._position_table[stock]['quantity']
+    
+    def get_position_table_stock_avgprice(self, stock):
+        return self._position_table[stock]['avg_price']
+        
     def result(self):
         pass
         
@@ -157,7 +227,8 @@ class Trade():
         self._deal_datetime = deal_datetime
         self._stock = stock
         self._direction = direction
-        self._price = float(price)
+        #self._price = float(price)
+        self._price = price
         self._quantity = quantity
         
     def get_deal_time(self):
@@ -175,11 +246,24 @@ class Trade():
     def get_price(self):
         return self._price
     
+    def get_stock_code(self):
+        return self._stock.get_stockinfo_code()
+
+    def get_stock_exch(self):
+        return self._stock.get_stockinfo_exch()
+    
+    def set_price(self, price):
+        if price:
+            self._price = float(price)
+        else:
+            print "set price error"
+            return False
+    
 if __name__ == '__main__':
     
     now = datetime.datetime.now().strptime('2002-08-17','%Y-%m-%d')
     start = datetime.datetime.strptime('2014-09-20','%Y-%m-%d')
-    end = datetime.datetime.strptime('2014-09-21','%Y-%m-%d')
+    end = datetime.datetime.strptime('2014-09-22','%Y-%m-%d')
     
     si = StockInfo({'code':'600882','exch':'ss'})
     si2 = StockInfo({'code':'900920','exch':'ss'})
@@ -193,9 +277,10 @@ if __name__ == '__main__':
     p.add(Trade(end,si,'short',12.63,100))
     p.add(Trade(end,si,'short',12.63,100))
     p.add(Trade(end,si2,'long',0.63,100))
-    #p.close_position()
     p.add(Trade(end,si2,'short',0.1,100))
-    p.add(Trade(end,si,'long',11.63,500))
+    #p.add(Trade(end,si,'long',11.63,500))
+    #p.add(Trade(end,si2,'short','today:Close',1000))
+    p.clear_position(end)
     p.desc()
     print p._position_table
 
