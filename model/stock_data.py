@@ -4,7 +4,6 @@
 
 import os
 import sys
-import datetime
 
 sys.path.append(os.path.dirname(os.path.split(os.path.realpath(__file__))[0]))
 
@@ -50,13 +49,42 @@ class StockData(Model):
 		else:
 			return False
 		
+	def generate_stock_list_by_condition(self, date, conditions):
+		if not date:
+			print "generate stock list by condition date error"
+			return False
+		else:
+			subs = []
+			if conditions:
+				for condition in conditions:
+					item_ = condition['item']
+					max_ =  condition['max']
+					min_ = condition['min']
+					if not item_:
+						print "ERROR item is null"
+						return False
+					sub = ""
+					if not min_ and not max_:
+						print "max and min can not both null"
+						return False
+					elif not min_:
+						sub = " AND %s <= %s" % (item_,max_)
+					elif not max_:
+						sub = " AND %s >= %s" % (item_,min_)
+					else: # max min both not ""
+						sub = " AND %s >= %s AND %s <= %s" % (item_,min_,item_,max_)
+					subs.append(sub)
+			
+			else:
+				print "conditions empty not ready yet"
+				return False
 		
-		
-		
-		
-		
-		
-		
+		qtype = "SELECT code,exchange as exch " 
+		ext = " Date = '%s'" % date.strftime('%Y-%m-%d')
+		for sub in subs:
+			ext += sub
+		q = self.Q(qtype=qtype).extra(ext)
+		return q
 		
 		
 		
