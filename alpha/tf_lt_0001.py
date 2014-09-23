@@ -18,9 +18,8 @@ import datetime
 sys.path.append(os.path.dirname(os.path.split(os.path.realpath(__file__))[0]))
 
 from model.stock_data import StockData
-from lib.alpha import Alpha
 
-class TFLT0001(Alpha):
+class TFLT0001(object):
     def running(self):
         pass
         

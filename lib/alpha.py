@@ -68,21 +68,38 @@ class StockPoolBuilder(object):
         #qq = self._sp.stock_pool_ind_computing_format()
         #for i in qq:
         #    print i
-       
+        #print self._stock_list,self._sp_start,self._sp_end
         self._ind = Indicator(self._sp,self._start,self._indicator_list)
-        
     
+    def delete_incompleted_data(self):
+        
+        for stock in self._ind._useful_ind_format_data:
+            for dat in stock['chart']:
+                for ind in self._indicator_list:
+                    if False == stock['chart'][dat][ind]:
+                        #print stock['chart'][dat][ind]
+                        try:
+                            self._ind._useful_ind_format_data.remove(stock)   # extremely violent
+                        except Exception:
+                            pass
+                        #print self._ind._useful_ind_format_data
+
+        print "ocmplete stock number: ",len(self._ind._useful_ind_format_data)
+        #print self._ind._useful_ind_format_data
+        
+            
 if __name__ == '__main__':
     now = datetime.datetime.now()
     yest = now.date() - datetime.timedelta(days=1)
     print yest
-    stock_condition = {'date':yest,'condition':[{'item':'Close','min':15.0,'max':25.0},
-                                                 {'item':'Volume','min':1000000,'max':''}]}
-    indicator_list = ['MA5','MA120']
+    stock_condition = {'date':yest,'condition':[{'item':'Close','min':18.0,'max':22.0},
+                                                 {'item':'Volume','min':'','max':1000000}]}
+    indicator_list = ['MA5',]
     start = yest
     spb = StockPoolBuilder(stock_condition,indicator_list,datetime.datetime.strptime('2014-09-01','%Y-%m-%d').date())
     print "stocknum:",spb.count_stock_num()
     spb.build_stock_pool_indicator()
+    spb.delete_incompleted_data()
     
     
     print "used time: ",datetime.datetime.now()-now

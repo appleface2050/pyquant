@@ -168,9 +168,7 @@ class Indicator(object):
             '''
             if date_index.index(date) < (int(ma_day_type)-1):
                 print "ERROR, not enough stock pool data to cal indicator",date
-                
                 return False
-            
             
             d_start = date_index[date_index.index(date) - (int(ma_day_type)-1)]           #平均值开始计算的日期
             d_end = date                                                                  #平均值计算结束日期，即当天
@@ -258,14 +256,14 @@ class Indicator(object):
 
 if __name__ == '__main__':
     now = datetime.datetime.now()
-    start = datetime.datetime.strptime('2014-08-20','%Y-%m-%d').date()
+    start = datetime.datetime.strptime('2014-08-22','%Y-%m-%d').date()
     end = datetime.datetime.strptime('2014-09-22','%Y-%m-%d').date()
-    start_ind_counting_date = datetime.datetime.strptime('2014-08-25','%Y-%m-%d').date()
-    si = StockInfo({'code':'600882','exch':'ss'})
-    si2 = StockInfo({'code':'900920','exch':'ss'})
+    start_ind_counting_date = datetime.datetime.strptime('2014-09-01','%Y-%m-%d').date()
+    si = StockInfo({'code':'002653','exch':'sz'})
+    si2 = StockInfo({'code':'002654','exch':'sz'})
     sp = StockPool([si,si2],start,end)
     #print sp.stock_pool_desc()
-    ind = Indicator(sp,start_ind_counting_date,['MA5',])
+    ind = Indicator(sp,start_ind_counting_date,['MA5'])
     #print ind._ind_format_data[0]['chart']
     print ind._useful_ind_format_data
     print datetime.datetime.now()-now
