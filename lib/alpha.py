@@ -29,8 +29,8 @@ class Alpha(object):
             
     def find_trade_day(self):
         days = StockData.mgr().get_trade_day(self._sim_start.strftime('%Y-%m-%d'),self._sim_end.strftime('%Y-%m-%d'))[:]
-        return days
-
+        return [i['Date'].date() for i in days]
+    
     def strategy_desc(self):
         return self._strategy_desc
     
@@ -44,25 +44,45 @@ class Alpha(object):
         self._trade_day_list = self.find_trade_day()
         print "sim days: ",len(self._trade_day_list)
         for dat in self._trade_day_list:
-            print 'start sim...',dat['Date'].strftime('%Y-%m-%d')
+            print 'start sim...',dat.strftime('%Y-%m-%d')
             self.strategy(dat)
 
-    def trigger_overtake(self, item1, item2, op, stock_data):
+
+
+    def trigger_overtake(self, item1, item2, op, stock_data, start):
         """
         trigger
         item: indicator or stock raw item 
         op: operator eg: up, down
         """
         assert op in TRIGGER_OP_LIST
-        if item1 and item2 and stock_data:
+
+        yest = self.find_last_trade_day(start)
+        if yest == False:         # the first day in self._trade_day_list, do not cal
+            return False
+        elif item1 and item2 and stock_data:
             if op == 'up':
-                return stock_data[item1] > stock_data[item2]
+                return stock_data[start][item1] > stock_data[start][item2] and stock_data[yest][item1] <= stock_data[yest][item2]
             elif op == 'down':
-                return stock_data[item1] < stock_data[item2]
+                return stock_data[start][item1] < stock_data[start][item2] and stock_data[yest][item1] >= stock_data[yest][item2]
             else:
                 print "op error"
                 exit(2)
 
+    def find_last_trade_day(self, start):
+        #print start
+        if start not in self._trade_day_list:
+            print "ERROR, find last trade day error"
+            exit(2)
+        inde = self._trade_day_list.index(start)
+        if inde != 0:
+            return  self._trade_day_list[inde-1]
+        elif inde == 0:
+            return False
+        else:
+            print "ERROR, find last trade day error"
+            exit(2)
+        
         
 class StockPoolBuilder(object):
     def __init__(self, stock_condition, indicator_list, start):

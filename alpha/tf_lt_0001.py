@@ -29,10 +29,9 @@ class TFLT0001(Alpha):
     """
             
     def strategy(self, start):
-        start = start['Date'].date()
         for stock in self._sp:
-            stock_data = stock['chart'][start]
-            if self.trigger_overtake('MA120','MA240','up',stock_data):
+            stock_data = stock['chart']
+            if self.trigger_overtake('MA120','MA240','down',stock_data,start):
                 print stock['code'],start,stock['chart'][start]
                 
 
@@ -43,7 +42,7 @@ if __name__ == '__main__':
     #stock_condition = {'date':yest,'condition':[{'item':'Close','min':18.0,'max':22.0},{'item':'Volume','min':'','max':1000000}]}
     stock_condition = {'date':yest,'condition':[{'item':'code','min':'600882','max':'600882'}]}
     indicator_list = ['MA120','MA240']
-    sim_start = datetime.datetime.strptime('2014-09-01','%Y-%m-%d').date()
+    sim_start = datetime.datetime.strptime('2003-09-01','%Y-%m-%d').date()
     sim_end = yest
     spb = StockPoolBuilder(stock_condition,indicator_list,sim_start)
     print "stocknum:",spb.count_stock_num()
