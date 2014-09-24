@@ -32,7 +32,7 @@ class TFLT0001(Alpha):
         for stock in self._sp:
             stock_data = stock['chart']
             if self.trigger_overtake('MA120','MA240','down',stock_data,start):
-                print stock['code'],start,stock['chart'][start]
+                print stock['code'],start,stock['chart'][start],stock['code'],self.find_last_trade_day(start),stock['chart'][self.find_last_trade_day(start)]
                 
 
 if __name__ == '__main__':

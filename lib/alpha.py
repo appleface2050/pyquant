@@ -44,7 +44,7 @@ class Alpha(object):
         self._trade_day_list = self.find_trade_day()
         print "sim days: ",len(self._trade_day_list)
         for dat in self._trade_day_list:
-            print 'start sim...',dat.strftime('%Y-%m-%d')
+            #print 'start sim...',dat.strftime('%Y-%m-%d')
             self.strategy(dat)
 
 
@@ -58,6 +58,11 @@ class Alpha(object):
         assert op in TRIGGER_OP_LIST
 
         yest = self.find_last_trade_day(start)
+        stock_data_date_list = stock_data.keys()
+        if (start not in stock_data_date_list) or (yest not in stock_data_date_list):
+            print start,yest,"this day do not hive stock data in mysql"
+            return False
+        
         if yest == False:         # the first day in self._trade_day_list, do not cal
             return False
         elif item1 and item2 and stock_data:
