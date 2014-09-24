@@ -31,10 +31,10 @@ class TFLT0001(Alpha):
     def strategy(self, start):
         start = start['Date'].date()
         for stock in self._sp:
-            print stock['code'],stock['chart'][start]
-            
-    
-        
+            stock_data = stock['chart'][start]
+            if self.trigger_overtake('MA120','MA240','up',stock_data):
+                print stock['code'],start,stock['chart'][start]
+                
 
 if __name__ == '__main__':
     now = datetime.datetime.now()

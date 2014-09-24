@@ -148,8 +148,6 @@ class Indicator(object):
                     #print date
                     ma = self.counting_averae(stock['chart'],date,date_index,ma_day_type)
                     stock['chart'][date][ma_type] = ma
-                    
-        #print self._ind_format_data[0]['chart']
         
     def counting_averae(self, stock_data, date, date_index, ma_day_type):
         '''
@@ -184,8 +182,7 @@ class Indicator(object):
                     #print day
                     #print  stock_data[day]
                     sum_close += float(stock_data[day]['CLOSE'])
-                #print sum_close
-                return "%0.02f"%float(sum_close/int(ma_day_type))
+                return float("%.4f"%float(sum_close/int(ma_day_type)))
        
     def prepare_cal_day_list(self, start, end, date_index):
         res = []

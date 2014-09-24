@@ -29,22 +29,14 @@ TIMEOUT_FETCH_DAILY = 10
 #technical analysis indicators
 TECH_ANALY_IND = ['MA5','MA120','MA240','MACD','KDJ']
 
-
-
-
 #direction list
 DIRECTION_LIST = ['long', 'short']
-
-
-
-
 
 #trade price order list
 TRADE_PRICE_ORDER_LIST = ['today:Close','today:Open','today:AdjClose']
 
-
-
-
+#tragger op list
+TRIGGER_OP_LIST = ['up','down']
 
 
 

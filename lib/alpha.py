@@ -10,7 +10,7 @@ sys.path.append(os.path.dirname(os.path.split(os.path.realpath(__file__))[0]))
 
 from lib.stock  import StockInfo
 from lib.indicator import Indicator
-from conf.settings import TECH_ANALY_IND,DIRECTION_LIST,TRADE_PRICE_ORDER_LIST
+from conf.settings import TRIGGER_OP_LIST
 from model.stock_data import StockData
 from lib.stock import StockPool
 
@@ -27,9 +27,6 @@ class Alpha(object):
             self._strategy_desc = ""
             self._trade_day_list = []
             
-            
-            
-    
     def find_trade_day(self):
         days = StockData.mgr().get_trade_day(self._sim_start.strftime('%Y-%m-%d'),self._sim_end.strftime('%Y-%m-%d'))[:]
         return days
@@ -49,6 +46,22 @@ class Alpha(object):
         for dat in self._trade_day_list:
             print 'start sim...',dat['Date'].strftime('%Y-%m-%d')
             self.strategy(dat)
+
+    def trigger_overtake(self, item1, item2, op, stock_data):
+        """
+        trigger
+        item: indicator or stock raw item 
+        op: operator eg: up, down
+        """
+        assert op in TRIGGER_OP_LIST
+        if item1 and item2 and stock_data:
+            if op == 'up':
+                return stock_data[item1] > stock_data[item2]
+            elif op == 'down':
+                return stock_data[item1] < stock_data[item2]
+            else:
+                print "op error"
+                exit(2)
 
         
 class StockPoolBuilder(object):
