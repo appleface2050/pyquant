@@ -13,7 +13,34 @@ from lib.indicator import Indicator
 from conf.settings import TECH_ANALY_IND,DIRECTION_LIST,TRADE_PRICE_ORDER_LIST
 from model.stock_data import StockData
 from lib.stock import StockPool
-      
+
+class Alpha(object):
+    def __init__(self, sim_start, sim_end, sp):
+        if sim_start > sim_end:
+            print "sim time error"
+            return False
+        else:
+            self._sim_start = sim_start
+            self._sim_end = sim_end
+            self._sp = sp
+            self._strategy_desc = ""
+
+    def strategy_desc(self):
+        return self._strategy_desc
+    
+    def strategy(self, start):
+        """
+        for child class
+        """
+        return True
+    
+    def running(self):
+        print "sim days: ",self._sim_end - self._sim_start
+        while self._sim_start < self._sim_end:
+            print 'start sim...',self._sim_start
+            self.strategy(self._sim_start)
+            self._sim_start += datetime.timedelta(days=1)
+        
 class StockPoolBuilder(object):
     def __init__(self, stock_condition, indicator_list, start):
         self._stock_condition = stock_condition
@@ -32,7 +59,7 @@ class StockPoolBuilder(object):
     def generate_stock_pool_start_end(self):
         #self._sp_end = self._stock_condition['date']
         #self._sp_start = self.generate_sp_start(self._start, indicator_list)
-        return self.generate_sp_start(self._start, indicator_list), self._stock_condition['date']
+        return self.generate_sp_start(self._start, self._indicator_list), self._stock_condition['date']
         
     def generate_sp_start(self, start, indicator_list):
         '''
@@ -83,24 +110,27 @@ class StockPoolBuilder(object):
                         except Exception:
                             pass
                         #print self._ind._useful_ind_format_data
-
         print "ocmplete stock number: ",len(self._ind._useful_ind_format_data)
+    
         #print self._ind._useful_ind_format_data
-        
+    
+    def get_useful_ind_format_data(self):
+        return self._ind._useful_ind_format_data
             
 if __name__ == '__main__':
     now = datetime.datetime.now()
     yest = now.date() - datetime.timedelta(days=1)
     print yest
-    stock_condition = {'date':yest,'condition':[{'item':'Close','min':18.0,'max':22.0},
-                                                 {'item':'Volume','min':'','max':1000000}]}
-    indicator_list = ['MA5',]
+    #stock_condition = {'date':yest,'condition':[{'item':'Close','min':18.0,'max':22.0},{'item':'Volume','min':'','max':1000000}]}
+    stock_condition = {'date':yest,'condition':[{'item':'code','min':'600882','max':'600882'}]}
+    indicator_list = ['MA120','MA240']
     start = yest
-    spb = StockPoolBuilder(stock_condition,indicator_list,datetime.datetime.strptime('2014-09-01','%Y-%m-%d').date())
+    spb = StockPoolBuilder(stock_condition,indicator_list,datetime.datetime.strptime('2013-09-01','%Y-%m-%d').date())
     print "stocknum:",spb.count_stock_num()
     spb.build_stock_pool_indicator()
     spb.delete_incompleted_data()
-    
+    for stock in spb.get_useful_ind_format_data():
+        print stock
     
     print "used time: ",datetime.datetime.now()-now
     
