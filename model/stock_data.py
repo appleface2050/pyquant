@@ -34,7 +34,7 @@ class StockData(Model):
 	def get_stock_data_from_db(self, code, exch, start, end):
 		if code and exch and start and end:
 			qtype = "SELECT CODE,exchange,DATE,OPEN,High,Low,CLOSE,Volume,AdjClose"
-			ext = "CODE='%s' AND exchange = '%s' AND DATE>='%s' AND DATE<'%s'" % (code,exch,start,end)
+			ext = "CODE='%s' AND exchange = '%s' AND DATE>='%s' AND DATE<='%s'" % (code,exch,start,end)
 			q = self.Q(qtype=qtype).extra(ext)
 			return q
 		else:
@@ -45,6 +45,15 @@ class StockData(Model):
 			qtype = "SELECT %s " % item
 			ext = "CODE='%s' AND exchange='%s' AND DATE='%s'" % (code,exch,start)
 			q = self.Q(qtype=qtype).extra(ext)
+			return q
+		else:
+			return False
+	
+	def get_trade_day(self, start, end):
+		if start and end:
+			qtype = "SELECT distinct Date"
+			ext = "`code` IN ('000001','000002','000004','000005','000006','000007','000008','000009','000010','000011') and Date>='%s' and Date<='%s'" % (start,end) 
+			q = self.Q(qtype=qtype).extra(ext).orderby('Date', 'ASC')
 			return q
 		else:
 			return False

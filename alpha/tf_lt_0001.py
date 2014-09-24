@@ -10,6 +10,7 @@ from lib.alpha import StockPoolBuilder,Alpha
 
 class TFLT0001(Alpha):
     def __init__(self, sim_start, sim_end, sp):
+        super(Alpha, self).__init__()
         if sim_start > sim_end:
             print "sim time error"
             return False
@@ -26,12 +27,13 @@ class TFLT0001(Alpha):
                     当120日均线突破240日均线  clear 并且long 100
                     当240日均线突破120日均线 clear 并且short 100
     """
-    
+            
     def strategy(self, start):
+        start = start['Date'].date()
         for stock in self._sp:
-            sp_all_date = stock['chart'].keys()
-            if start in sp_all_date:
-                print stock['chart'][start]
+            print stock['code'],stock['chart'][start]
+            
+    
         
 
 if __name__ == '__main__':
