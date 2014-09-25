@@ -67,7 +67,7 @@ class Position(object):
         stock_position_info['direction'] = trade.get_direction()
         stock_position_info['avg_price'] = trade.get_price()
         stock_position_info['quantity'] = trade.get_quantity()
-        stock_position_info['net'] = 0.0
+        stock_position_info['net'] = -(float(stock_position_info['avg_price'])*int(stock_position_info['quantity']))
         self._position_table[trade.get_stock()] = stock_position_info
         
     def update_again_stock_in_position_table(self, trade):
@@ -79,7 +79,7 @@ class Position(object):
         stock_position_info['avg_price'] = trade.get_price()
         stock_position_info['direction'] = trade.get_direction()
         stock_position_info['quantity'] = trade.get_quantity()
-        #stock_position_info['net'] do not update
+        stock_position_info['net'] += -(float(stock_position_info['avg_price'])*int(stock_position_info['quantity']))
     
     def update_stock_in_position_table(self, trade):
         #find stock in position_table
@@ -92,28 +92,32 @@ class Position(object):
             price = trade.get_price()
             quantity = trade.get_quantity()
             
-            if direction == stock_position_info['direction']: #same direction update average price , quantity
+            if direction == stock_position_info['direction']: #enter same stock again, same direction update average price , quantity, net
+                stock_position_info['net'] += -(float(price) * int(quantity))
                 stock_position_info['avg_price'] = (quantity*price + stock_position_info['quantity']*stock_position_info['avg_price']) / (int(quantity)+int(stock_position_info['quantity']))
                 stock_position_info['avg_price'] = float("%0.02f"%float(stock_position_info['avg_price']))
                 stock_position_info['quantity'] += quantity
             else:
                 if quantity <= stock_position_info['quantity']:
-                    stock_position_info['net'] += self.cal_diff_direction_net(stock_position_info['direction'],stock_position_info['avg_price'],stock_position_info['quantity'],
-                                                                            direction,price,quantity)
+                    stock_position_info['net'] += float(price)*int(quantity)
+                    #stock_position_info['net'] += self.cal_diff_direction_net(stock_position_info['direction'],stock_position_info['avg_price'],stock_position_info['quantity'],
+                    #                                                        direction,price,quantity)
+                    
                     stock_position_info['quantity'] -= quantity
-                elif quantity > stock_position_info['quantity']:  
-                    stock_position_info['net'] += self.cal_diff_direction_net(stock_position_info['direction'],stock_position_info['avg_price'],stock_position_info['quantity'],
-                                                                          direction,price,stock_position_info['quantity'])
+                elif quantity > stock_position_info['quantity']:
+                    #stock_position_info['net'] += self.cal_diff_direction_net(stock_position_info['direction'],stock_position_info['avg_price'],stock_position_info['quantity'],
+                    #                                                      direction,price,stock_position_info['quantity'])
+                    stock_position_info['net'] += float(price)*int(stock_position_info['quantity'])            #first count withdraw part net 
                     stock_position_info['quantity'] = quantity - stock_position_info['quantity']
                     stock_position_info['avg_price'] = price
                     stock_position_info['direction'] = direction
-
+                    stock_position_info['net'] += -(float(price)*int(stock_position_info['quantity']))          #second count enter part net
 
     def cal_diff_direction_net(self, direction1, price1, quantity1, direction2 ,price2 ,quantity2):
         '''
         in this function, quantity2 should less than(or equal) quantity1
         '''
-
+        print  direction1, price1, quantity1, direction2 ,price2 ,quantity2
         if quantity2 > quantity1:
             return False
         if direction1 == direction2:
@@ -246,7 +250,8 @@ class Position(object):
     def desc_position_table_result(self):
         desc = self.get_position_table()
         for stock_info in desc:
-            print stock_info.get_stockinfo_code(),stock_info.get_stockinfo_exch(),desc[stock_info]
+            print stock_info.get_stockinfo_code(),stock_info.get_stockinfo_exch(),desc[stock_info]['net']
+            print "current position:",desc[stock_info]
 
 class Trade():
     '''
@@ -299,21 +304,20 @@ if __name__ == '__main__':
     
     si = StockInfo({'code':'600882','exch':'ss'})
     si2 = StockInfo({'code':'900920','exch':'ss'})
-    t1 = Trade(start,si,'long',8.63,100)
+    t1 = Trade(start,si,'long',10,100)
     p = Position()
     p.add(t1)
     #print p._position_table
-    p.add(Trade(end,si,'short',9.63,200))
+    p.add(Trade(end,si,'long',19,200))
     p.add(Trade(end,si,'short',11.63,100))
     p.add(Trade(end,si,'short',12.63,100))
     p.add(Trade(end,si,'short',12.63,100))
     p.add(Trade(end,si,'short',12.63,100))
-    p.add(Trade(end,si2,'long',0.63,100))
-    p.add(Trade(end,si2,'short',0.1,100))
-    #p.add(Trade(end,si,'long',11.63,500))
+#    p.add(Trade(end,si2,'long',0.63,100))
+#    p.add(Trade(end,si2,'short',0.1,100))
     p.add(Trade(end,si2,'short','today:Close',1000))
-    p.clear_stock(end,si2)
-    p.clear_position(end)
+    #p.clear_stock(end,si2)
+    #p.clear_position(end)
     p.desc()
     p.desc_table_order_result()
     p.desc_position_table_result()

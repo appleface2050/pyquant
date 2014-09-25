@@ -78,7 +78,9 @@ class Alpha(object):
         print "trade order history record:"
         self.report_order_table()
         print '-----------------------------------------------------'
+        print 'trade result:'
         self.report_positioin_table()
+        print '-----------------------------------------------------'
         #print self.get_position()
         #self.trade_order_desc()
     def report_positioin_table(self):
