@@ -13,20 +13,39 @@ from lib.indicator import Indicator
 from conf.settings import TRIGGER_OP_LIST
 from model.stock_data import StockData
 from lib.stock import StockPool
+from lib.position import Position
 
 class Alpha(object):
-    def __init__(self, sim_start, sim_end, sp):
-        print "initqq"
+    def __init__(self, sim_start, sim_end, stock_condition, indicator_list):
         if sim_start > sim_end:
             print "sim time error"
             return False
         else:
+            now = datetime.datetime.now()
             self._sim_start = sim_start
             self._sim_end = sim_end
-            self._sp = sp
+            self._indicator_list = indicator_list
+            self._stock_condition = stock_condition
+            self._spb = StockPoolBuilder(self._stock_condition,self._indicator_list,self._sim_start)
+            self._spb.build_stock_pool_indicator()
+            self._spb.delete_incompleted_data()
+            print 'Initializing Stock Pool done, time used:  ',datetime.datetime.now()-now
+            self._sp = self._spb.get_useful_ind_format_data()
+            self._strategy_name = ""
             self._strategy_desc = ""
             self._trade_day_list = []
+            self._trade_order_list = []
+            self._position = Position()
             
+    def get_sim_end(self):
+        return self._sim_end
+    
+    def get_sim_start(self):
+        return self._sim_start
+    
+    def add_order(self, trade):
+        self._trade_order_list.append(trade)
+    
     def find_trade_day(self):
         days = StockData.mgr().get_trade_day(self._sim_start.strftime('%Y-%m-%d'),self._sim_end.strftime('%Y-%m-%d'))[:]
         return [i['Date'].date() for i in days]
@@ -34,21 +53,65 @@ class Alpha(object):
     def strategy_desc(self):
         return self._strategy_desc
     
-    def strategy(self, start):
+    def strategy_calculating(self, start):
         """
-        for child class
+        implement in child class
         """
         return True
+    
+    def get_position(self):
+        return self._position.get_position_table()
     
     def running(self):
         self._trade_day_list = self.find_trade_day()
         print "sim days: ",len(self._trade_day_list)
         for dat in self._trade_day_list:
             #print 'start sim...',dat.strftime('%Y-%m-%d')
-            self.strategy(dat)
+            self.execute()
+            self.strategy_calculating(dat)
+        
+        self.clear_position()
+        
+    def report(self):
+        print '-----------------------------------------------------'
+        print "Reporting......"
+        print "trade order history record:"
+        self.report_order_table()
+        print '-----------------------------------------------------'
+        self.report_positioin_table()
+        #print self.get_position()
+        #self.trade_order_desc()
+    def report_positioin_table(self):
+        self._position.desc_position_table_result()
+    
+    def report_order_table(self):
+        self._position.desc_table_order_result()
 
-
-
+    def clear_position(self):
+        self._position.clear_position(self.get_sim_end())
+        
+    def clear_stock(self, date, stock_info):
+        self._position.clear_stock(date, stock_info)
+        
+    def trade_order_desc(self):
+        self._position.desc()
+        
+    def get_trade_order_list(self):
+        return self._position.get_table_list()
+    
+    def execute(self):
+        if not self._trade_order_list:
+            return False
+        else:
+            while(self._trade_order_list):
+                self._position.add(self._trade_order_list.pop(0))    #first in first out
+                self._position.desc()
+                return True
+#             for trade in self._trade_order_list:
+#                 print trade
+#                 self._position.add(trade)
+#                 return True
+    
     def trigger_overtake(self, item1, item2, op, stock_data, start):
         """
         trigger
@@ -60,7 +123,7 @@ class Alpha(object):
         yest = self.find_last_trade_day(start)
         stock_data_date_list = stock_data.keys()
         if (start not in stock_data_date_list) or (yest not in stock_data_date_list):
-            print start,yest,"this day do not hive stock data in mysql"
+            #print start,yest,"this day do not hive stock data in mysql"
             return False
         
         if yest == False:         # the first day in self._trade_day_list, do not cal
@@ -77,7 +140,7 @@ class Alpha(object):
     def find_last_trade_day(self, start):
         #print start
         if start not in self._trade_day_list:
-            print "ERROR, find last trade day error"
+            print "ERROR, find last trade day error 1"
             exit(2)
         inde = self._trade_day_list.index(start)
         if inde != 0:
@@ -85,9 +148,21 @@ class Alpha(object):
         elif inde == 0:
             return False
         else:
-            print "ERROR, find last trade day error"
+            print "ERROR, find last trade day error 2"
             exit(2)
-        
+    
+    def find_next_trade_day(self, start):
+        if start not in self._trade_day_list:
+            print "ERROR, find next trade day error1"
+            exit(2)
+        inde = self._trade_day_list.index(start)
+        if (inde+1) != len(self._trade_day_list):
+            return self._trade_day_list[inde+1]
+        elif (inde+1) == len(self._trade_day_list):
+            return False
+        else:
+            print "ERROR, find next trade day error2"
+            exit(2)
         
 class StockPoolBuilder(object):
     def __init__(self, stock_condition, indicator_list, start):

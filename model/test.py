@@ -7,9 +7,19 @@ import sys
 
 sys.path.append(os.path.dirname(os.path.split(os.path.realpath(__file__))[0]))
 
-from lib.utils import strptime,time_next
 
 
 
+class Alpha(object):
+    #_qq = [1,2,3]
+    def __init__(self):
+        self._qq = [1]
 
-
+         
+class B(Alpha):
+    def __init__(self):
+        super(B, self).__init__()
+        print self._qq
+        
+        
+b = B()

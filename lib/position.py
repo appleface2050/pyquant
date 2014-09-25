@@ -70,7 +70,6 @@ class Position(object):
         stock_position_info['net'] = 0.0
         self._position_table[trade.get_stock()] = stock_position_info
         
-        
     def update_again_stock_in_position_table(self, trade):
         '''
         用于上次清仓后再次交易这只股票的情况，这种情况下quantity=0 ,net！=0
@@ -131,6 +130,9 @@ class Position(object):
     
     
     def trade_exec(self, trade):
+        '''
+        execute a trade order
+        '''
         if not trade:
             return False
         else:
@@ -153,7 +155,18 @@ class Position(object):
             print "directioin:",i.get_direction()
             print "price:",i.get_price()
             print "quantity:",i.get_quantity()
-            
+    
+    def clear_stock(self, date, stock):
+        '''
+        close a stock position: generate a stock clear position trade and exce it 
+        '''
+        if self.get_position_table_stock_quantity(stock) == 0:
+            print "ERROR, clear stock error, this stock's quantity is 0"
+            exit(2)
+        else:
+            t = self.generate_reverse_trade_today_close(stock, date)
+            self.add(t)
+    
     def clear_position(self, date):
         '''
         close position: generate a lot of clear position trade and exce it
@@ -194,7 +207,13 @@ class Position(object):
             else:
                 print "direction doesn't change"
                 return direction
-        
+            
+    def get_table_list(self):
+        return self._trade_list
+            
+    def get_position_table(self):
+        return self._position_table    
+    
     def get_position_table_stock_code(self, stock):    
         return self._position_table[stock]['code']
     
@@ -213,13 +232,26 @@ class Position(object):
     def get_position_table_stock_avgprice(self, stock):
         return self._position_table[stock]['avg_price']
         
-    def result(self):
-        pass
+    def desc_table_order_result(self):
+        for stock_if in self._position_table:
+            for trade in self._trade_list:
+                if stock_if.get_stockinfo_code() == trade.get_stock_code() and stock_if.get_stockinfo_exch() == trade.get_stock_exch():
+                    print trade.get_stock_code(),'\t', 
+                    print trade.get_stock_exch(),'\t',
+                    print trade.get_deal_time(),'\t',
+                    print trade.get_direction(),'\t',
+                    print trade.get_price(),'\t',
+                    print trade.get_quantity()
         
+    def desc_position_table_result(self):
+        desc = self.get_position_table()
+        for stock_info in desc:
+            print stock_info.get_stockinfo_code(),stock_info.get_stockinfo_exch(),desc[stock_info]
+
 class Trade():
     '''
     Class Trade use to record every deal infomation ,
-    include: deal_time, stock, direction, quantity, 
+    include: deal_time, stock, direction, price, quantity, 
     '''
     def __init__(self,deal_datetime, stock, direction, price, quantity ):
         assert direction in DIRECTION_LIST
@@ -279,10 +311,13 @@ if __name__ == '__main__':
     p.add(Trade(end,si2,'long',0.63,100))
     p.add(Trade(end,si2,'short',0.1,100))
     #p.add(Trade(end,si,'long',11.63,500))
-    #p.add(Trade(end,si2,'short','today:Close',1000))
+    p.add(Trade(end,si2,'short','today:Close',1000))
+    p.clear_stock(end,si2)
     p.clear_position(end)
     p.desc()
-    print p._position_table
+    p.desc_table_order_result()
+    p.desc_position_table_result()
+    #print p._position_table
 
 
 
