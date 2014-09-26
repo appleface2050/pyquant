@@ -3,12 +3,12 @@
 import os
 import sys
 import datetime
-from lib.stock import StockInfo
 
 sys.path.append(os.path.dirname(os.path.split(os.path.realpath(__file__))[0]))
 
 from lib.alpha import Alpha
 from lib.position import Trade
+from lib.stock import StockInfo
 
 class TFLT0001(Alpha):
     def __init__(self, sim_start, sim_end, stock_condition, indicator_list):
@@ -23,23 +23,28 @@ class TFLT0001(Alpha):
                 stock_data = stock['chart']
                 
                 if self.trigger_overtake('MA120','MA240','up',stock_data,start):         #enter strategy
-                    #print start,stock['chart'][start]
+
+                    #print start,stock['chart'][start],'up'
                     #si2 = StockInfo({'code':'900920','exch':'ss'})
                     s = StockInfo({'code':stock['code'], 'exch':stock['exch']})
                     self.add_order(Trade(tomorrow,s,'long','today:Close',100))
                         #print (tomorrow,stock,'long','today:Close',100)
                     #print stock['code'],start,stock['chart'][start]
                 if self.trigger_overtake('MA120','MA240','down',stock_data,start):       #withdraw strategy
-                    s = StockInfo({'code':stock['code'], 'exch':stock['exch']})
-                    self.clear_stock(tomorrow,s)
+                    #print start,stock['chart'][start],'down'
+                    s = StockInfo({'code':stock['code'],'exch':stock['exch']})
+                    if self._position.find_stock_in_position_table(s) and self._position.get_position_table_stock_quantity(s) != 0:        #stock exist in position table and quantity !=0
+                        self.clear_stock(tomorrow,s)
 
+                    
 if __name__ == '__main__':
     now = datetime.datetime.now()
     yest = now.date() - datetime.timedelta(days=1)
-    stock_condition = {'date':yest,'condition':[{'item':'code','min':'300003','max':'300003'}]}
+    stock_condition = {'date':yest,'condition':[{'item':'close','min':18.0,'max':22.0}]}
+    #stock_condition = {'date':yest,'condition':[{'item':'code','min':'002407','max':'002407'}]}
     indicator_list = ['MA120','MA240']
-    sim_start = datetime.datetime.strptime('2012-12-01','%Y-%m-%d').date()
-    sim_end = yest
+    sim_start = datetime.datetime.strptime('2004-09-01','%Y-%m-%d').date()
+    sim_end = datetime.datetime.strptime('2008-09-01','%Y-%m-%d').date()
     print 'Simulating Strategy ...',sim_start,'-->',sim_end 
     s = TFLT0001(sim_start,sim_end,stock_condition,indicator_list)
     s.running()

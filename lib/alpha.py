@@ -30,6 +30,7 @@ class Alpha(object):
             self._spb.build_stock_pool_indicator()
             self._spb.delete_incompleted_data()
             print 'Initializing Stock Pool done, time used:  ',datetime.datetime.now()-now
+            print 'Start Simulating Strategy......'
             self._sp = self._spb.get_useful_ind_format_data()
             self._strategy_name = ""
             self._strategy_desc = ""
@@ -64,12 +65,11 @@ class Alpha(object):
     
     def running(self):
         self._trade_day_list = self.find_trade_day()
-        print "sim days: ",len(self._trade_day_list)
+        print "sim days(trade day): ",len(self._trade_day_list)
         for dat in self._trade_day_list:
             #print 'start sim...',dat.strftime('%Y-%m-%d')
             self.execute()
             self.strategy_calculating(dat)
-        
         self.clear_position()
         
     def report(self):
@@ -79,12 +79,15 @@ class Alpha(object):
         self.report_order_table()
         print '-----------------------------------------------------'
         print 'trade result:'
-        self.report_positioin_table()
+        self.report_positioin_table('nocp')
         print '-----------------------------------------------------'
         #print self.get_position()
         #self.trade_order_desc()
-    def report_positioin_table(self):
-        self._position.desc_position_table_result()
+    def report_positioin_table(self, type=None):
+        if not type:
+            self._position.desc_position_table_result()
+        elif type == 'nocp':
+            self._position.desc_position_table_result_no_current_position()
     
     def report_order_table(self):
         self._position.desc_table_order_result()
@@ -107,12 +110,8 @@ class Alpha(object):
         else:
             while(self._trade_order_list):
                 self._position.add(self._trade_order_list.pop(0))    #first in first out
-                self._position.desc()
+                #self._position.desc()
                 return True
-#             for trade in self._trade_order_list:
-#                 print trade
-#                 self._position.add(trade)
-#                 return True
     
     def trigger_overtake(self, item1, item2, op, stock_data, start):
         """

@@ -146,6 +146,7 @@ class StockInfo(object):
     def __init__(self, stock_dict):
         self._code = str(stock_dict['code'])
         self._exch = str(stock_dict['exch'])
+        self._key = stock_dict['code']+'.'+self._exch
         
     def get_stockinfo_code(self):
         return self._code
@@ -153,7 +154,8 @@ class StockInfo(object):
     def get_stockinfo_exch(self):
         return self._exch
 
-
+    def get_stockinfo_key(self):
+        return self._key
 
 if __name__ == '__main__':
 
