@@ -27,7 +27,7 @@ class Alpha(object):
             self._sim_end = self.find_recent_trade_day()
             self._indicator_list = indicator_list
             self._stock_condition = stock_condition
-            self._spb = StockPoolBuilder(self._stock_condition,self._indicator_list,self._sim_start)
+            self._spb = StockPoolBuilder(self._stock_condition,self._indicator_list,self._sim_start,self._sim_end)
             self._spb.build_stock_pool_indicator()
             self._spb.delete_incompleted_data()
             print 'Initializing Stock Pool done, time used:  ',datetime.datetime.now()-now
@@ -175,24 +175,23 @@ class Alpha(object):
             exit(2)
         
 class StockPoolBuilder(object):
-    def __init__(self, stock_condition, indicator_list, start):
+    def __init__(self, stock_condition, indicator_list, start, end):
         self._stock_condition = stock_condition
         self._indicator_list = indicator_list
         self._start = start
-        self._sp_start, self._sp_end = self.generate_stock_pool_start_end()
+        self._sp_start = self.generate_sp_start(self._start, self._indicator_list)
+        self._sp_end = end
         self._stock_list = self.generate_stock_list()
-        #self._sp = StockPool(self._stock_list,start,end)
-        
         self._sp = ''
         self._ind = ''
     
     def count_stock_num(self):
         return len(self._stock_list)
     
-    def generate_stock_pool_start_end(self):
-        #self._sp_end = self._stock_condition['date']
-        #self._sp_start = self.generate_sp_start(self._start, indicator_list)
-        return self.generate_sp_start(self._start, self._indicator_list), self._stock_condition['date']
+ #   def generate_stock_pool_start_end(self):
+ #       #self._sp_end = self._stock_condition['date']
+ #       #self._sp_start = self.generate_sp_start(self._start, indicator_list)
+ #       return self.generate_sp_start(self._start, self._indicator_list), self._stock_condition['end']
         
     def generate_sp_start(self, start, indicator_list):
         '''

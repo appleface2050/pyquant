@@ -21,10 +21,8 @@ class TFLT0001(Alpha):
         if tomorrow: # lastest trade day do not sim
             for stock in self._sp:
                 stock_data = stock['chart']
-                
                 if self.trigger_overtake('MA120','MA240','up',stock_data,start):         #enter strategy
-
-                    #print start,stock['chart'][start],'up'
+                    
                     #si2 = StockInfo({'code':'900920','exch':'ss'})
                     s = StockInfo({'code':stock['code'], 'exch':stock['exch']})
                     self.add_order(Trade(tomorrow,s,'long','today:Close',100))
@@ -40,11 +38,11 @@ class TFLT0001(Alpha):
 if __name__ == '__main__':
     now = datetime.datetime.now()
     yest = now.date() - datetime.timedelta(days=1)
-    stock_condition = {'date':yest,'condition':[{'item':'close','min':18.0,'max':22.0}]}
-    #stock_condition = {'date':yest,'condition':[{'item':'code','min':'002407','max':'002407'}]}
-    indicator_list = ['MA120','MA240']
-    sim_start = datetime.datetime.strptime('2013-01-01','%Y-%m-%d').date()
-    sim_end =  yest
+    sim_start = datetime.datetime.strptime('2012-01-01','%Y-%m-%d').date()
+    sim_end = yest
+    stock_condition = {'date':sim_start,'condition':[{'item':'close','min':18.0,'max':22.0}]}
+    #stock_condition = {'date':sim_start,'condition':[{'item':'code','min':'002407','max':'002407'}]}
+    indicator_list = ['MA120','MA240'] 
     print 'Simulating Strategy ...',sim_start,'-->',sim_end 
     s = TFLT0001(sim_start,sim_end,stock_condition,indicator_list)
     s.running()
