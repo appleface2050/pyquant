@@ -24,6 +24,7 @@ class Alpha(object):
             now = datetime.datetime.now()
             self._sim_start = sim_start
             self._sim_end = sim_end
+            self._sim_end = self.find_recent_trade_day()
             self._indicator_list = indicator_list
             self._stock_condition = stock_condition
             self._spb = StockPoolBuilder(self._stock_condition,self._indicator_list,self._sim_start)
@@ -46,7 +47,7 @@ class Alpha(object):
     
     def add_order(self, trade):
         self._trade_order_list.append(trade)
-    
+
     def find_trade_day(self):
         days = StockData.mgr().get_trade_day(self._sim_start.strftime('%Y-%m-%d'),self._sim_end.strftime('%Y-%m-%d'))[:]
         return [i['Date'].date() for i in days]
@@ -138,6 +139,14 @@ class Alpha(object):
                 print "op error"
                 exit(2)
 
+    def find_recent_trade_day(self):
+        days = StockData.mgr().get_trade_day(self._sim_start.strftime('%Y-%m-%d'),self._sim_end.strftime('%Y-%m-%d'))[:]
+        trade_days = [i['Date'].date() for i in days]
+        if self._sim_end in trade_days:
+            return self._sim_end
+        else:
+            return trade_days[-1]  
+        
     def find_last_trade_day(self, start):
         #print start
         if start not in self._trade_day_list:
@@ -212,7 +221,7 @@ class StockPoolBuilder(object):
         else:
             return trade_days[-1]    
         
-    def generate_stock_list(self,):
+    def generate_stock_list(self):
         res = []
         date = self._stock_condition['date']
         conditions = self._stock_condition['condition']
@@ -248,7 +257,6 @@ class StockPoolBuilder(object):
 if __name__ == '__main__':
     now = datetime.datetime.now()
     yest = now.date() - datetime.timedelta(days=1)
-    print yest
     #stock_condition = {'date':yest,'condition':[{'item':'Close','min':18.0,'max':22.0},{'item':'Volume','min':'','max':1000000}]}
     stock_condition = {'date':yest,'condition':[{'item':'code','min':'600882','max':'600882'}]}
     indicator_list = ['MA120','MA240']

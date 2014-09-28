@@ -44,7 +44,7 @@ if __name__ == '__main__':
     #stock_condition = {'date':yest,'condition':[{'item':'code','min':'002407','max':'002407'}]}
     indicator_list = ['MA120','MA240']
     sim_start = datetime.datetime.strptime('2013-01-01','%Y-%m-%d').date()
-    sim_end = yest
+    sim_end =  yest
     print 'Simulating Strategy ...',sim_start,'-->',sim_end 
     s = TFLT0001(sim_start,sim_end,stock_condition,indicator_list)
     s.running()
