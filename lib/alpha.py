@@ -50,7 +50,7 @@ class Alpha(object):
     def find_trade_day(self):
         days = StockData.mgr().get_trade_day(self._sim_start.strftime('%Y-%m-%d'),self._sim_end.strftime('%Y-%m-%d'))[:]
         return [i['Date'].date() for i in days]
-    
+
     def strategy_desc(self):
         return self._strategy_desc
     
@@ -203,11 +203,20 @@ class StockPoolBuilder(object):
                 else:
                     continue
         return max_day
+
+    def find_recent_trade_day(self, dat):
+        days = StockData.mgr().get_trade_day(self._sp_start.strftime('%Y-%m-%d'),self._sp_end.strftime('%Y-%m-%d'))[:]
+        trade_days = [i['Date'].date() for i in days]
+        if dat in trade_days:
+            return dat
+        else:
+            return trade_days[-1]    
         
     def generate_stock_list(self,):
         res = []
         date = self._stock_condition['date']
         conditions = self._stock_condition['condition']
+        date = self.find_recent_trade_day(date)
         stock_list = StockData.mgr().generate_stock_list_by_condition(date,conditions)[:]
         for i in stock_list:
             res.append(StockInfo(i))

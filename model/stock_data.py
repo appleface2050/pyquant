@@ -4,6 +4,7 @@
 
 import os
 import sys
+from datetime import date
 
 sys.path.append(os.path.dirname(os.path.split(os.path.realpath(__file__))[0]))
 
@@ -57,7 +58,7 @@ class StockData(Model):
 			return q
 		else:
 			return False
-		
+	
 	def generate_stock_list_by_condition(self, date, conditions):
 		if not date:
 			print "generate stock list by condition date error"
