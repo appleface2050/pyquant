@@ -38,6 +38,19 @@ TRADE_PRICE_ORDER_LIST = ['today:Close','today:Open','today:AdjClose']
 #tragger op list
 TRIGGER_OP_LIST = ['up','down']
 
+#trade enter list
+TRADE_ENTER_LIST = ['in','out','inout','outin','mix']
+
+RISK_FREE_RATE_DAILY = 0.03/252
+
+
+
+
+
+
+
+
+
 
 
 

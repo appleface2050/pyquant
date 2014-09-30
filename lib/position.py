@@ -209,7 +209,7 @@ class Position(object):
             print "ERROR, clear stock error, this stock's quantity is 0"
             exit(2)
         else:
-            t = self.generate_reverse_trade_today_close(stock, date)
+            t = self.generate_reverse_out_trade_today_close(stock, date)
             self.add(t)
     
     def clear_position(self, date):
@@ -221,11 +221,11 @@ class Position(object):
             if self.get_position_table_stock_quantity(stock) == 0:
                 continue
             else:
-                t = self.generate_reverse_trade_today_close(stock, date)
+                t = self.generate_reverse_out_trade_today_close(stock, date)
                 #print t
                 self.add(t)
 
-    def generate_reverse_trade_today_close(self, stock, date):
+    def generate_reverse_out_trade_today_close(self, stock, date):
         if not stock or not date:
             print "ERROR stock or date is null"
             return False
@@ -238,7 +238,8 @@ class Position(object):
                       stock,
                       self.get_reverse_direction(self.get_position_table_stock_direction(stock)),
                       'today:Close',
-                      self.get_position_table_stock_quantity(stock))
+                      self.get_position_table_stock_quantity(stock),
+                      'out')
             return t
         
     def get_reverse_direction(self, direction):
@@ -301,13 +302,19 @@ class Position(object):
         for stock_info in desc:
             print stock_info.get_stockinfo_code(),'\t',stock_info.get_stockinfo_exch(),'\t',desc[stock_info]['net']
             
-
+    def get_trade(self, date):
+        res_list = []
+        for t in self._trade_list:
+            if t.get_deal_time() == date:
+                res_list.append(t)
+        return res_list
+                
 class Trade():
     '''
     Class Trade use to record every deal infomation ,
     include: deal_time, stock, direction, price, quantity, 
     '''
-    def __init__(self,deal_datetime, stock, direction, price, quantity ):
+    def __init__(self,deal_datetime, stock, direction, price, quantity, enter):
         assert direction in DIRECTION_LIST
         #self._deal_time = deal_time
         self._deal_datetime = deal_datetime
@@ -316,7 +323,8 @@ class Trade():
         #self._price = float(price)
         self._price = price
         self._quantity = quantity
-        
+        self._enter = enter              #use to easier computing strategyRecorder
+    
     def get_deal_time(self):
         return self._deal_datetime
     
@@ -338,12 +346,24 @@ class Trade():
     def get_stock_exch(self):
         return self._stock.get_stockinfo_exch()
     
+    def get_stock_enter(self):
+        return self._enter
+    
     def set_price(self, price):
         if price:
             self._price = float(price)
         else:
             print "set price error"
             return False
+        
+    def desc(self):
+        print "_deal_datetime:",self.get_deal_time
+        print "code:",self.get_stock_code()
+        print "exch:",self.get_stock_exch()
+        print "_direction:",self.get_direction()
+        print "_quantity",self.get_quantity()
+        print "_price",self.get_price()
+        print "_enter:",self.get_stock_enter()
     
 if __name__ == '__main__':
     
@@ -358,10 +378,10 @@ if __name__ == '__main__':
     p = Position()
     #p.add(t1)
     #print p._position_table
-    p.add(Trade(end,si,'long',19,100))
-    p.add(Trade(end,si2,'short',11.63,100))
-    p.add(Trade(end,si3,'long',12.63,100))
-    p.add(Trade(end,si2,'short',11.63,500))
+    p.add(Trade(end,si,'long',19,100,'in'))
+    p.add(Trade(end,si2,'short',11.63,100,'out'))
+    p.add(Trade(start,si3,'long',12.63,100,'in'))
+    #p.add(Trade(end,si2,'short',11.63,500,'mix'))
     #p.add(Trade(end,si,'short',12.63,100))
     #p.add(Trade(end,si,'short',12.63,100))
 #    p.add(Trade(end,si2,'long',0.63,100))
@@ -369,10 +389,13 @@ if __name__ == '__main__':
     #p.add(Trade(end,si2,'short','today:Close',1000))
     #p.clear_stock(end,si2)
     #p.clear_position(end)
+    #for t in p._trade_list:
+    #    t.desc()
     p.desc()
     p.desc_table_order_result()
     p.desc_position_table_result()
     #print p._position_table
+    print p.get_trade(end.date())
 
 
 

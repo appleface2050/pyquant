@@ -65,3 +65,22 @@ def gzip_decompress(data):
     zfile.close()
     return data
 
+def average(data_list):
+    su = 0.0
+    for data in data_list:
+        su += data
+    return su/len(data_list)
+    
+def std(data_list):
+    '''
+    Standard deviation
+    '''
+    tmp = 0.0
+    avg = average(data_list)
+    for data in data_list:
+        tmp += (data - avg)**2
+    return float("%.4f"%((tmp/(len(data_list)-1))**0.5))
+    
+    
+    
+

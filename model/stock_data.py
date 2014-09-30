@@ -40,7 +40,16 @@ class StockData(Model):
 			return q
 		else:
 			return False
-		
+	
+	def get_interval_day_price(self, end, code, exch, item):
+		if end and code and exch and item:
+			qtype = "SELECT %s " % item
+			ext = "CODE='%s' AND exchange='%s' AND DATE<='%s'" % (code,exch,end)
+			q = self.Q(qtype=qtype).extra(ext).orderby('Date', 'DESC')
+			return q
+		else:
+			return False		
+	
 	def get_one_day_price(self, start, code, exch, item):
 		if start and code and exch and item:
 			qtype = "SELECT %s " % item

@@ -156,6 +156,19 @@ class StockInfo(object):
 
     def get_stockinfo_key(self):
         return self._key
+    
+#     def get_close_price(self, dat):
+#         q = StockData.mgr().get_one_day_price(dat,self.get_stockinfo_code(),self.get_stockinfo_exch(),'close')[:]
+#         if q:
+#             return q[0]['close']
+#         else:
+#             return False
+
+    def get_last_exist_close_price(self, dat):
+        q = StockData.mgr().get_one_day_price(dat,self.get_stockinfo_code(),self.get_stockinfo_exch(),'close')[:]
+        if not q:
+            q = StockData.mgr().get_interval_day_price(dat,self.get_stockinfo_code(),self.get_stockinfo_exch(),'close') # find the last exist close price
+        return q[0]['close']
 
 if __name__ == '__main__':
 

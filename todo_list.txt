@@ -5,7 +5,7 @@
 3 stratgy类 记录每日stratgy信息
 包括：
 {date:
-{净值(new_value)，exposure，acc_exposure, trade_count,win_trade_count,loss_trade_count}
+{净值(new_value)，current_exposure，acc_exposure, trade_count,win_trade_count,loss_trade_count}
 }
 
 stratgy_finsh_report: sharp ratio......

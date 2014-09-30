@@ -14,6 +14,7 @@ from conf.settings import TRIGGER_OP_LIST
 from model.stock_data import StockData
 from lib.stock import StockPool
 from lib.position import Position
+from lib.strategyRecorder import StrategyRecorder
 
 class Alpha(object):
     def __init__(self, sim_start, sim_end, stock_condition, indicator_list):
@@ -38,7 +39,11 @@ class Alpha(object):
             self._trade_day_list = []
             self._trade_order_list = []
             self._position = Position()
-            
+            self._strategy_recorder = StrategyRecorder()
+    
+    def get_strategy_recorder(self):
+        return self._strategy_recorder
+    
     def get_sim_end(self):
         return self._sim_end
     
@@ -62,7 +67,8 @@ class Alpha(object):
         return True
     
     def get_position(self):
-        return self._position.get_position_table()
+        return self._position
+        #return self._position.get_position_table()
     
     def running(self):
         self._trade_day_list = self.find_trade_day()
@@ -70,7 +76,9 @@ class Alpha(object):
         for dat in self._trade_day_list:
             #print 'start sim...',dat.strftime('%Y-%m-%d')
             self.execute()
+            self.get_strategy_recorder().record(dat,self.get_position())
             self.strategy_calculating(dat)
+            
         self.clear_position()
         
     def report(self):
@@ -82,13 +90,20 @@ class Alpha(object):
         print 'trade result:'
         self.report_positioin_table('nocp')
         print '-----------------------------------------------------'
+        print 'strategy record:'
+        self.report_strategy_record()
+        print '-----------------------------------------------------'
         #print self.get_position()
         #self.trade_order_desc()
+        
     def report_positioin_table(self, type=None):
         if not type:
             self._position.desc_position_table_result()
         elif type == 'nocp':
             self._position.desc_position_table_result_no_current_position()
+    
+    def report_strategy_record(self):
+        self.get_strategy_recorder().report()
     
     def report_order_table(self):
         self._position.desc_table_order_result()
