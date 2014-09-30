@@ -1,2 +1,11 @@
 1 创建action类  report需要输出多少个action，每个action ： 最高float net 最低float net 持有时间，最高float/进场价   最低float/进场价
 2 report 显示场内资金总量（每日） float net总量(每日) net总量(每日) 
+
+
+3 stratgy类 记录每日stratgy信息
+包括：
+{date:
+{净值(new_value)，exposure，acc_exposure, trade_count,win_trade_count,loss_trade_count}
+}
+
+stratgy_finsh_report: sharp ratio......
