@@ -9,3 +9,10 @@
 }
 
 stratgy_finsh_report: sharp ratio......
+
+
+
+
+Annualized Return25.09%Annualized Benchmark Return-0.30%Positive Month (%)72.73%Semivariance 4.45%Alpha 1.90%Benchmark Max Drawdown
+36.61%Annualized Volatility13.75%Benchmark monthly return
+1.11%Downside Volatility6.46%Benchmark Downside Volatility19.81%Max Drawdown10.19%Benchmark Annualized Volatility29.19%Sortino Ratio3.89 Benchmark Sharpe Ratio-0.2448Benchmark Sortino Ratio-0.0152Benchmark Positive Month(%)51.52%

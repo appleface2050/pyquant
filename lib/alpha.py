@@ -103,7 +103,7 @@ class Alpha(object):
             self._position.desc_position_table_result_no_current_position()
     
     def report_strategy_record(self):
-        self.get_strategy_recorder().report()
+        self.get_strategy_recorder().report(self.get_position(),self._trade_day_list)
     
     def report_order_table(self):
         self._position.desc_table_order_result()

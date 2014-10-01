@@ -40,8 +40,8 @@ if __name__ == '__main__':
     yest = now.date() - datetime.timedelta(days=1)
     sim_start = datetime.datetime.strptime('2013-01-01','%Y-%m-%d').date()
     sim_end = yest
-    #stock_condition = {'date':sim_start,'condition':[{'item':'close','min':0.0,'max':5.0}]}
-    stock_condition = {'date':sim_start,'condition':[{'item':'code','min':'002407','max':'002407'}]}
+    stock_condition = {'date':sim_start,'condition':[{'item':'close','min':0.0,'max':5.0}]}
+    #stock_condition = {'date':sim_start,'condition':[{'item':'code','min':'002407','max':'002407'}]}
     indicator_list = ['MA120','MA240'] 
     print 'Simulating Strategy ...',sim_start,'-->',sim_end 
     s = TFLT0001(sim_start,sim_end,stock_condition,indicator_list)
