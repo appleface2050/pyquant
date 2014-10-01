@@ -25,10 +25,13 @@ class StrategyRecorder(object):
          }
          '''
         #finish running
-        self._daily_oscillation_standard_deviation = 0.0
-        self._sharp_retio = 0.0
+        self._max_exposure = 0.0
+        #self._daily_oscillation_standard_deviation = 0.0
+        self._enter_time = 0
+        self._trade_days = 0
         self._absolute_rate_of_return = 0.0
-        self._annualized_rate_of_return = 0.0
+        self._yearly_rate_of_return = 0.0        
+        self._sharp_retio = 0.0
         self._max_draw_down = 0.0    #最大搓跌
         self._max_draw_down_duration = ''  #最长搓跌期
         self._total_net = 0.0
@@ -67,6 +70,7 @@ class StrategyRecorder(object):
         for i in self._strategy_recorder:
             print i,self._strategy_recorder[i]
         self._daily_oscillation_standard_deviation
+        self._sharp_retio 
     
     def report(self):
         self.cal_finish_strategy_indicators()

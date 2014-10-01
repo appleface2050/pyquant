@@ -6,7 +6,7 @@ import json
 # mysql
 
 A_SHARES_CODE = {
-	'host':'192.168.88.129',
+	'host':'192.168.88.128',
 	#'host':'localhost',
 	'port':3306,
 	'user':'appleface',
@@ -42,6 +42,8 @@ TRIGGER_OP_LIST = ['up','down']
 TRADE_ENTER_LIST = ['in','out','inout','outin','mix']
 
 RISK_FREE_RATE_DAILY = 0.03/252
+
+RISK_FREE_RATE_YEARLY = 0.03
 
 
 
