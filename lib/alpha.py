@@ -127,7 +127,7 @@ class Alpha(object):
             while(self._trade_order_list):
                 self._position.add(self._trade_order_list.pop(0))    #first in first out
                 #self._position.desc()
-                return True
+            return True
     
     def trigger_overtake(self, item1, item2, op, stock_data, start):
         """

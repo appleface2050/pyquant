@@ -357,9 +357,9 @@ class Trade():
             return False
         
     def desc(self):
-        print "_deal_datetime:",self.get_deal_time
-        print "code:",self.get_stock_code()
-        print "exch:",self.get_stock_exch()
+        print "_deal_datetime:",self.get_deal_time()
+        print "_code:",self.get_stock_code()
+        print "_exch:",self.get_stock_exch()
         print "_direction:",self.get_direction()
         print "_quantity",self.get_quantity()
         print "_price",self.get_price()
