@@ -11,10 +11,13 @@ from lib.position import Trade
 from lib.stock import StockInfo
 from lib.stockcondition import StockCondition
 
-class TFLT0001(Alpha):
+class TFLT0001FA(Alpha):
+    '''
+    tf_lt_0001策略全量测试
+    '''
     def __init__(self, sim_start, sim_end, stock_condition, indicator_list):
-        super(TFLT0001, self).__init__(sim_start, sim_end, stock_condition, indicator_list)
-        self._strategy_name = "TFLT0001"
+        super(TFLT0001FA, self).__init__(sim_start, sim_end, stock_condition, indicator_list)
+        self._strategy_name = "TFLT0001FA"
         
     def strategy_calculating(self, start):
         tomorrow = self.find_next_trade_day(start)
@@ -27,7 +30,7 @@ class TFLT0001(Alpha):
                     #si2 = StockInfo({'code':'900920','exch':'ss'})
                     s = StockInfo({'code':stock['code'], 'exch':stock['exch']})
                     self.add_order(Trade(tomorrow,s,'long','today:Close',100,'in'))
-                    #print (tomorrow,stock,'long','today:Close',100)
+                    print (tomorrow,stock,'long','today:Close',100)
                     #print stock['code'],start,stock['chart'][start]
                 if self.trigger_overtake('MA120','MA240','down',stock_data,start):       #withdraw strategy
                     #print start,stock['chart'][start],'down'
@@ -40,15 +43,17 @@ if __name__ == '__main__':
     now = datetime.datetime.now()
     yest = now.date() - datetime.timedelta(days=1)
     sim_start = datetime.datetime.strptime('1992-01-01','%Y-%m-%d').date()
-    sim_end = datetime.datetime.strptime('1993-10-01','%Y-%m-%d').date()
+    sim_end = datetime.datetime.strptime('2014-10-01','%Y-%m-%d').date()
     #sim_end = yest
     #stock_condition = {'date':sim_start,'condition':[{'item':'close','min':0.0,'max':15.0}]}
     #stock_condition = {'date':sim_start,'condition':[{'item':'code','min':'002407','max':'002407'}]}
-    stock_condition = StockCondition({'term':{'date':sim_start,'condition':[{'item':'close','min':0.0,'max':100.0}]},
-                         'type':'condition'})
+    stock_condition = StockCondition({'type':'total',
+                                      'term':''
+                                      }
+                                     )
     indicator_list = ['MA120','MA240'] 
     print 'Simulating Strategy ...',sim_start,'-->',sim_end 
-    s = TFLT0001(sim_start,sim_end,stock_condition,indicator_list)
+    s = TFLT0001FA(sim_start,sim_end,stock_condition,indicator_list)
     s.running()
     s.report()
     print 'Simulating Strategy done, time used:  ',datetime.datetime.now()-now

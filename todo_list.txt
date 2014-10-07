@@ -1,3 +1,30 @@
 1 增加使用adjclose测试功能
 2 增加类似基金的投资策略和Strategy report（存在最大资金量）
 
+
+
+------------------------------
+1 mysql备份机制
+2 stockpool可能存在多占用内存的情况
+3 内存升级后，跑全量数据批处理开4个进程，然后将结果存储在txt文件，再汇总
+
+------------------------------
+策略全量测试方法：
+1 全量股票每次100个循环
+2 产生的trade order保留起来
+3 最后根据所有股票生成的trade order 产生strategy report
+4 生成report 
+a 每日的{'solid_net': 969.9999999999998, 'net': 969.9999999999998, 'acc_exposure': 3395.0, 'current_exposure': 0.0, 'float_net': 0}
+b trade order history record:
+000005 	sz 	1992-04-14 	long 	9.75 	100
+000005 	sz 	1992-12-30 	short 	9.5 	100
+c trade result:
+000005 	sz 	-25.0
+000004 	sz 	515.0
+d strategy record:
+enter times: 3
+absolute return 970.0
+max exposure: 3395.0
+absolute rate of return 28.57 %
+annualized rate of return 15.72 %
+sharp_retio: 0.486334193115

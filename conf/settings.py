@@ -41,6 +41,10 @@ TRIGGER_OP_LIST = ['up','down']
 #trade enter list
 TRADE_ENTER_LIST = ['in','out','inout','outin','mix']
 
+STOCK_CONDITION_TYPE = ['total', #所有股票
+					'condition', #条件选股
+					]
+
 RISK_FREE_RATE_DAILY = 0.03/252
 
 RISK_FREE_RATE_YEARLY = 0.03

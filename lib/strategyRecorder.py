@@ -88,7 +88,8 @@ class StrategyRecorder(object):
                                        'current_exposure':self.cal_current_exposure(position),
                                        'acc_exposure':self.cal_acc_exposure(dat,position),
                                        }
-        #print dat,self._strategy_recorder[dat]
+
+        print dat,self._strategy_recorder[dat]
         
         
     def cal_acc_exposure(self, dat, position):

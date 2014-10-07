@@ -236,14 +236,19 @@ class StockPoolBuilder(object):
             return trade_days[-1]    
         
     def generate_stock_list(self):
-        res = []
-        date = self._stock_condition['date']
-        conditions = self._stock_condition['condition']
-        date = self.find_recent_trade_day(date)
-        stock_list = StockData.mgr().generate_stock_list_by_condition(date,conditions)[:]
-        for i in stock_list:
-            res.append(StockInfo(i))
-        return res
+        sc_type = self._stock_condition.get_stock_condition_type()
+        sc_term = self._stock_condition.get_stock_condition_term()
+        if sc_type == 'condition':
+            res = []
+            date = sc_term['date']
+            conditions = sc_term['condition']
+            date = self.find_recent_trade_day(date)
+            stock_list = StockData.mgr().generate_stock_list_by_condition(date,conditions)[:]
+            for i in stock_list:
+                res.append(StockInfo(i))
+            return res
+        elif sc_type == 'total':
+            print sc_type
         
     def build_stock_pool_indicator(self):
         print "init stock number in stock pool: ",len(self._stock_list)
