@@ -105,5 +105,10 @@ class StockData(Model):
 		q = self.Q(qtype=qtype).extra(ext)
 		return q
 		
+	def get_all_stock_info(self):
+		qtype = "SELECT DISTINCT code,exchange AS exch"
+		q = self.Q(qtype=qtype)
+		return q
+	
 		
 		

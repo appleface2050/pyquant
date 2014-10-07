@@ -141,9 +141,9 @@ class Indicator(object):
             
             for stock in self._ind_format_data:
             #for stock in ind_format_data:
-                #print stock
-                #print stock['code'],stock['exch'],stock['chart'][0],stock['chart'][1],stock['chart'][2]
-                #print stock['code']
+                
+                
+                print stock['code']
                 count_day_list = self.prepare_count_day_list(stock,self._start)
                 date_index = self.bubblesort_asc(stock['chart'].keys())
                 #print len(date_index)

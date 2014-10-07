@@ -43,6 +43,7 @@ TRADE_ENTER_LIST = ['in','out','inout','outin','mix']
 
 STOCK_CONDITION_TYPE = ['total', #所有股票
 					'condition', #条件选股
+					'stocks', #直接使用stock_list进行初始化
 					]
 
 RISK_FREE_RATE_DAILY = 0.03/252
