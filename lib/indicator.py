@@ -120,7 +120,11 @@ class Indicator(object):
         ]
         """
         #ind_format_data = self._stock_pool.stock_pool_ind_computing_format()
-        #print ind_format_data
+        
+        if not self._ind_format_data:            #may be stock pool is empty
+            print "ERROR, Stock pool may be empty"
+            return False
+
         day_index = self._ind_format_data[0]['chart'].keys()
         #day_index = ind_format_data[0]['chart'].keys()
         day_index = self.bubblesort_asc(day_index)
@@ -165,7 +169,7 @@ class Indicator(object):
                                                     平均值计算结束日期，即当天
             '''
             if date_index.index(date) < (int(ma_day_type)-1):
-                print "ERROR, not enough stock pool data to cal indicator",date
+                #print "ERROR, not enough stock pool data to cal indicator",date
                 return False
             
             d_start = date_index[date_index.index(date) - (int(ma_day_type)-1)]           #平均值开始计算的日期
@@ -243,7 +247,7 @@ class Indicator(object):
         if not self._start:
             return False
         else:
-            min_date = self._stock_pool.get_min_date().date()
+            min_date = self._stock_pool.get_min_date()
             if min_date > self._start:
                 print "min date:",min_date
                 print "start:   ",self._start

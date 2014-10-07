@@ -88,7 +88,7 @@ class StrategyRecorder(object):
                                        'current_exposure':self.cal_current_exposure(position),
                                        'acc_exposure':self.cal_acc_exposure(dat,position),
                                        }
-        print dat,self._strategy_recorder[dat]
+        #print dat,self._strategy_recorder[dat]
         
         
     def cal_acc_exposure(self, dat, position):
@@ -129,9 +129,8 @@ class StrategyRecorder(object):
         
         #分子 = 年化收益-无风险收益
         #分母 = 
-        
         self._sharp_retio = (self._yearly_rate_of_return/100-RISK_FREE_RATE_YEARLY) \
-        /(self._daily_oscillation_standard_deviation/self._max_exposure/(sqrt(self._trade_days/RISK_FREE_RATE_YEARLY)))
+        /(self._daily_oscillation_standard_deviation/self._max_exposure/(sqrt(float(self._trade_days)/YEARLY_TRADE_DAY_NUMBER)))
         
         
     def report(self, position, trade_day_list):
@@ -143,8 +142,8 @@ class StrategyRecorder(object):
         print "max exposure:",self.get_max_exposure()
         print "absolute rate of return",self.get_absolute_rate_of_return(),"%"
         #print "yearly absolute return",self.get_yearly_absolute_return()       #no use
-        print "yearly rate of return",self.get_yearly_rate_of_return(),"%"
-        #print self._daily_oscillation_standard_deviation
+        print "annualized rate of return",self.get_yearly_rate_of_return(),"%"
+        #print "daily oscillation standard deviation",self._daily_oscillation_standard_deviation
         print "sharp_retio:",self.get_sharp_retio()
     
     def cal_current_exposure(self, position):

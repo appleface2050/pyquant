@@ -26,7 +26,7 @@ class StockPool(object):
         print "start: ",start
         print "end:   ",end
         print "stock number:",len(stock_list)
-        print "chart days number:",end-self.get_min_date().date()
+        print "chart days number:",end-self.get_min_date()
         print "-----------------------"
         
     def get_stock_pool_start(self):
@@ -47,6 +47,10 @@ class StockPool(object):
                     min_date = chart['DATE']
                 else:
                     continue
+        if not min_date:
+            min_date = self._start
+        else:
+            min_date = min_date.date()
         return min_date
         
     def get_stock_pool(self):
