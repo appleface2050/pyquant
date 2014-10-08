@@ -8,9 +8,9 @@ import re
 
 sys.path.append(os.path.dirname(os.path.split(os.path.realpath(__file__))[0]))
 
-from model.stock_data import StockData
-from lib.stock  import StockPool,StockChart,StockInfo
+from lib.stock  import StockPool,StockInfo
 from conf.settings import TECH_ANALY_IND
+from lib.utils import partition,quick_sort
 
 class Indicator(object):
     '''
@@ -125,10 +125,8 @@ class Indicator(object):
             print "ERROR, Stock pool may be empty"
             return False
 
-        day_index = self._ind_format_data[0]['chart'].keys()
-        #day_index = ind_format_data[0]['chart'].keys()
-        day_index = self.bubblesort_asc(day_index)
-        #print day_index
+#         day_index = self._ind_format_data[0]['chart'].keys()
+#         day_index = self.bubblesort_asc(day_index)
         
         #print len(ind_format_data[0]['chart'].keys()) #日期数量
         
@@ -141,16 +139,16 @@ class Indicator(object):
             
             for stock in self._ind_format_data:
             #for stock in ind_format_data:
-                
-                
+
                 print stock['code']
                 count_day_list = self.prepare_count_day_list(stock,self._start)
-                date_index = self.bubblesort_asc(stock['chart'].keys())
-                #print len(date_index)
-                #print count_day_list
+                
+                date_list = stock['chart'].keys()
+                #date_list = self.bubblesort_asc(date_list)
+                quick_sort(date_list, 0, len(date_list)-1)
                 for date in count_day_list:
                     #print date
-                    ma = self.counting_averae(stock['chart'],date,date_index,ma_day_type)
+                    ma = self.counting_averae(stock['chart'],date,date_list,ma_day_type)
                     stock['chart'][date][ma_type] = ma
         
     def counting_averae(self, stock_data, date, date_index, ma_day_type):
@@ -200,11 +198,12 @@ class Indicator(object):
         return res  
     
     def prepare_count_day_list(self, stock, start):
-        #date_list = stock['chart'].keys()
-        #date_list = self.delete_useless_date(date_list,start)
+        date_list = stock['chart'].keys()
+        date_list = self.delete_useless_date(date_list,start)
         #date_list = self.bubblesort_asc(date_list)
-        #return date_list
-        return self.bubblesort_asc(self.delete_useless_date(stock['chart'].keys(),start))
+        quick_sort(date_list, 0, len(date_list)-1)
+        return date_list
+        #return self.bubblesort_asc(self.delete_useless_date(stock['chart'].keys(),start))
         
     def delete_useless_date(self,date_list,start):
         res = []

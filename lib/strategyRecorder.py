@@ -12,7 +12,7 @@ sys.path.append(os.path.dirname(os.path.split(os.path.realpath(__file__))[0]))
 from lib.stock  import StockInfo
 from lib.position import Trade,Position
 from conf.settings import RISK_FREE_RATE_YEARLY,YEARLY_TRADE_DAY_NUMBER
-from lib.utils import std
+from lib.utils import std,find_max_date
 
 class StrategyRecorder(object):
     '''
@@ -175,7 +175,7 @@ class StrategyRecorder(object):
         if not day_list:
             return 0
         else:
-            last_day = self.bubblesort_desc(day_list)[0]
+            last_day = find_max_date(day_list)
             return self.get_strategy_recorder()[last_day]['solid_net']
     
     def cal_float_net(self, dat, position):
@@ -192,12 +192,12 @@ class StrategyRecorder(object):
             sum_float_net += float_net
         return sum_float_net
     
-    def bubblesort_desc(self, ob_list):
-        for j in range(len(ob_list)-1,-1,-1):
-            for i in range(j):
-                if ob_list[i] < ob_list[i+1]:
-                    ob_list[i],ob_list[i+1] = ob_list[i+1],ob_list[i]
-        return ob_list
+#     def bubblesort_desc(self, ob_list):
+#         for j in range(len(ob_list)-1,-1,-1):
+#             for i in range(j):
+#                 if ob_list[i] < ob_list[i+1]:
+#                     ob_list[i],ob_list[i+1] = ob_list[i+1],ob_list[i]
+#         return ob_list
     
 if __name__ == '__main__':
     now = datetime.datetime.now()

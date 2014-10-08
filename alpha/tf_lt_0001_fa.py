@@ -46,7 +46,7 @@ class FuallAmountTestManager():
         self._indicator_list = indicator_list
         
         self._full_stock_list = self.get_full_stock_list()
-        self._single_test_stock_amount = 100
+        self._single_test_stock_amount = 20
         self._alpha = ''
         
         self.run()
@@ -94,7 +94,7 @@ if __name__ == '__main__':
     
     now = datetime.datetime.now()
     yest = now.date() - datetime.timedelta(days=1)
-    sim_start = datetime.datetime.strptime('2008-01-01','%Y-%m-%d').date()
+    sim_start = datetime.datetime.strptime('1991-01-01','%Y-%m-%d').date()
     sim_end = datetime.datetime.strptime('2014-10-01','%Y-%m-%d').date()
 #     stock_condition = StockCondition({'type':'stocks',
 #                                       'term':[{'code': '000002', 'exch': 'sz'}, {'code': '000004', 'exch': 'sz'}]

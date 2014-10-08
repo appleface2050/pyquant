@@ -81,6 +81,48 @@ def std(data_list):
         tmp += (data - avg)**2
     return float("%.4f"%((tmp/(len(data_list)-1))**0.5))
     
-    
-    
+def find_max_date(day_list):
+    if not day_list:
+        return False
+    max_d = ""
+    for i in day_list:
+        if not max_d:
+            max_d = i 
+        elif max_d < i:
+            max_d = i
+        else:
+            continue
+    return max_d
 
+def partition(array,low,high):
+    key = array[low]
+    while low < high:
+        while low < high and array[high] >= key:
+            high -= 1
+        while low < high and array[high] < key:
+            array[low] = array[high]
+            low += 1
+            array[high] = array[low]
+    array[low] = key
+    return low
+
+
+def quick_sort(array,low,high):
+    if low < high:
+        key_index = partition(array,low,high)
+        quick_sort(array,low,key_index)
+        quick_sort(array,key_index+1,high)
+
+
+if __name__ == '__main__':
+    a = datetime.date(2007, 8, 21)
+    b = datetime.date(2008, 3, 10)
+    c = datetime.date(2009, 12, 25)
+    
+    array = [a,c,b]
+    print array
+    quick_sort(array,0,len(array)-1)
+    print array
+    
+    
+    
