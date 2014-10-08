@@ -90,9 +90,9 @@ class StockPoolBuilder(object):
             for dat in stock['chart']:
                 for ind in self._indicator_list:
                     if False == stock['chart'][dat][ind]:
-                        #print stock['chart'][dat][ind]
                         try:
-                            self._ind._useful_ind_format_data.remove(stock)   # extremely violent
+                            #self._ind._useful_ind_format_data.remove(stock)   # extremely violent
+                            del self._ind._useful_ind_format_data[stock]['chart'][dat]             
                         except Exception:
                             pass
                         #print self._ind._useful_ind_format_data

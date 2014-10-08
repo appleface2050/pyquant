@@ -89,7 +89,7 @@ class StrategyRecorder(object):
                                        'acc_exposure':self.cal_acc_exposure(dat,position),
                                        }
 
-        print dat,self._strategy_recorder[dat]
+        #print dat,self._strategy_recorder[dat]
         
         
     def cal_acc_exposure(self, dat, position):
@@ -124,14 +124,20 @@ class StrategyRecorder(object):
         self._trade_days = len(trade_day_list)
         self._absolute_return = self._strategy_recorder[trade_day_list[-1]]['net']
         self._yearly_absolute_return = float("%.2f"%(YEARLY_TRADE_DAY_NUMBER*self._absolute_return/self._trade_days))
-        self._absolute_rate_of_return = float("%.2f"%(self._absolute_return/self._max_exposure*100))
+        if self._max_exposure == 0:
+            self._absolute_rate_of_return = 0
+        else:
+            self._absolute_rate_of_return = float("%.2f"%(self._absolute_return/self._max_exposure*100))
         self._yearly_rate_of_return = float("%.2f"%(YEARLY_TRADE_DAY_NUMBER*self._absolute_rate_of_return/self._trade_days))
         self._daily_oscillation_standard_deviation = std(net_data_list)
         
         #分子 = 年化收益-无风险收益
         #分母 = 
-        self._sharp_retio = (self._yearly_rate_of_return/100-RISK_FREE_RATE_YEARLY) \
-        /(self._daily_oscillation_standard_deviation/self._max_exposure/(sqrt(float(self._trade_days)/YEARLY_TRADE_DAY_NUMBER)))
+        if self._max_exposure == 0:
+            self._sharp_retio = 0
+        else:   
+            self._sharp_retio = (self._yearly_rate_of_return/100-RISK_FREE_RATE_YEARLY) \
+                /(self._daily_oscillation_standard_deviation/self._max_exposure/(sqrt(float(self._trade_days)/YEARLY_TRADE_DAY_NUMBER)))
         
         
     def report(self, position, trade_day_list):

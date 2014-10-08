@@ -227,9 +227,9 @@ class Indicator(object):
         if not self.check_indicator():
             print "indicator wrong, please check indicator list again"
             return False
-        if not self.check_start_time():
-            print "start time wrong, please check start time again"
-            return False
+        #if not self.check_start_time():
+        #    print "start time wrong, please check start time again"
+        #    return False
         print "......data checking done......"
         self._ind_format_data = self._stock_pool.stock_pool_ind_computing_format()
         print "......indicator calculate data form prepare done......"
@@ -248,7 +248,7 @@ class Indicator(object):
         else:
             min_date = self._stock_pool.get_min_date()
             if min_date > self._start:
-                print "min date:",min_date
+                print "stock pool min date:",min_date
                 print "start:   ",self._start
                 return False
             else:

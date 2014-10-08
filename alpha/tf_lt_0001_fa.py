@@ -46,7 +46,7 @@ class FuallAmountTestManager():
         self._indicator_list = indicator_list
         
         self._full_stock_list = self.get_full_stock_list()
-        self._single_test_stock_amount = 20
+        self._single_test_stock_amount = 10
         self._alpha = ''
         
         self.run()
@@ -71,8 +71,9 @@ class FuallAmountTestManager():
                 print 'Simulating Strategy ...',sim_start,'-->',sim_end 
                 self._alpha = TFLT0001FA(self._sim_start,self._sim_end,stock_condition,self._indicator_list)
                 self._alpha.running()
-                self._alpha.report()
+                self._alpha.data2db()
                 stock_list = []
+                self._alpha = ''
                 print "last stock number:",len(self._full_stock_list)
                 print 'Simulating Strategy done, time used:  ',datetime.datetime.now()-now
                     

@@ -9,6 +9,7 @@ sys.path.append(os.path.dirname(os.path.split(os.path.realpath(__file__))[0]))
 
 from conf.settings import TRIGGER_OP_LIST
 from model.stock_data import StockData
+from model.test_res_data import TestOrderData
 from lib.position import Position
 from lib.strategyRecorder import StrategyRecorder
 from lib.stockpoolbuilder import StockPoolBuilder
@@ -198,19 +199,32 @@ class AlphaFullAmount(Alpha):
             #self.get_strategy_recorder().record(dat,self.get_position())
             self.strategy_calculating(dat)
         self.clear_position()
+    
+    def data2db(self):
+        order_table = self._position.get_table_list()
+        if not order_table:
+            return True
+        for i in order_table:
+            deal_date = i.get_deal_time()
+            code = i.get_stock().get_stockinfo_code()
+            exch = i.get_stock().get_stockinfo_exch()
+            direction = i.get_direction()
+            price = i.get_price()
+            quantity = i.get_quantity()
+            try:
+                s = TestOrderData.new()
+                s.strategy = 'TFLT0001FA'
+                s.code = str(code)
+                s.exchange = str(exch)
+                s.deal_date = deal_date
+                s.direction = str(direction)
+                s.price = float(price)
+                s.quantity = int(quantity)
+                s.save()
+            except Exception,e:
+                print e
+
         
-    def report(self):
-        print '-----------------------------------------------------'
-        print "Reporting......"
-        print "trade order history record:"
-        self.report_order_table()
-        print '-----------------------------------------------------'
-        print 'trade result:'
-        self.report_positioin_table('nocp')
-        print '-----------------------------------------------------'
-        #print 'strategy record:'
-        #self.report_strategy_record()
-        #print '-----------------------------------------------------'
 
 
 if __name__ == '__main__':

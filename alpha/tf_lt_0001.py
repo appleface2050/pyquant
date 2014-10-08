@@ -39,12 +39,12 @@ class TFLT0001(Alpha):
 if __name__ == '__main__':
     now = datetime.datetime.now()
     yest = now.date() - datetime.timedelta(days=1)
-    sim_start = datetime.datetime.strptime('1992-01-01','%Y-%m-%d').date()
-    sim_end = datetime.datetime.strptime('1993-10-01','%Y-%m-%d').date()
+    sim_start = datetime.datetime.strptime('1991-01-01','%Y-%m-%d').date()
+    sim_end = datetime.datetime.strptime('2014-10-01','%Y-%m-%d').date()
     #sim_end = yest
     #stock_condition = {'date':sim_start,'condition':[{'item':'close','min':0.0,'max':15.0}]}
     #stock_condition = {'date':sim_start,'condition':[{'item':'code','min':'002407','max':'002407'}]}
-    stock_condition = StockCondition({'term':{'date':sim_start,'condition':[{'item':'close','min':0.0,'max':100.0}]},
+    stock_condition = StockCondition({'term':{'date':sim_start,'condition':[{'item':'code','min':'600882','max':'600882'}]},
                          'type':'condition'})
     indicator_list = ['MA120','MA240'] 
     print 'Simulating Strategy ...',sim_start,'-->',sim_end 
